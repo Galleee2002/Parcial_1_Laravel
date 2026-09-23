@@ -18,7 +18,7 @@ Equivalencia con el ABM de películas del docente:
 
 Dejar Laravel 13 andando, con la base `apellido_nombre` en MySQL, y una home que solo presente el sitio.
 
-Archivos: `.env`, `resources/views/components/layouts/main.blade.php`, `resources/views/home.blade.php`, `app/Http/Controllers/HomeController.php`, `routes/web.php`, `public/css/style.css`. Copiar `public/css/bootstrap.min.css` desde el docente.
+Archivos: `.env`, `resources/views/components/layouts/main.blade.php`, `resources/views/home.blade.php`, `app/Http/Controllers/HomeController.php`, `routes/web.php`, `resources/css/app.css`. El layout carga Tailwind con `@vite`. En desarrollo, `npm run dev`.
 
 Patrón: `HomeController@index` y `<x-layouts.main>` de `proyecto-docente/resources/views/welcome.blade.php` y `components/layouts/main.blade.php`. La nav queda en Inicio, Servicios y Blog.
 
@@ -130,7 +130,7 @@ Armar el panel y el listado `/admin/posts`, todavía sin login.
 
 Archivos: `resources/views/components/layouts/admin.blade.php`, `AdminPostsController@index`, ruta `admin.posts.index`, `resources/views/admin/posts/index.blade.php`.
 
-Patrón: `components/layouts/admin.blade.php` del docente, pasado a `route()` como el layout `main`. La tabla y los botones salen de `movies/index.blade.php`. El aviso de éxito usa la misma clave `feedback.message` de [RULES.md](RULES.md).
+Patrón: `components/layouts/admin.blade.php` del docente, pasado a `route()` como el layout `main`, con el mismo `@vite` y utilidades de Tailwind. La tabla y los botones salen de `movies/index.blade.php`. El aviso de éxito usa la misma clave `feedback.message` de [RULES.md](RULES.md).
 
 Probar: `/admin/posts` lista las entradas con enlaces a crear, editar y eliminar.
 
@@ -217,5 +217,5 @@ Checklist antes de comprimir:
 - ABM de entradas con validación en PHP, errores en la vista y feedback de éxito.
 - Tres tablas creadas y cargadas con migraciones y seeders. Base llamada `apellido_nombre`.
 - `services` tiene más de cinco campos sin contar `id` ni `created_at` / `updated_at`.
-- HTML semántico, CSS propio sobre Bootstrap, PHPDoc en controllers y métodos clave.
+- HTML semántico, estilos con Tailwind cargados por Vite (`public/build/` incluido en el zip), PHPDoc en controllers y métodos clave.
 - El zip se llama `apellido-nombre.zip` y contiene el proyecto más `datos.txt`.

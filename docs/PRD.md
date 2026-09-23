@@ -64,7 +64,7 @@ El proyecto cuenta con un panel de administración restringido que permite gesti
   * Principio de Responsabilidad Única (SRP).
   * Nombres limpios e intencionales en español o inglés para variables, métodos y clases.
   * Etiquetas semánticas en HTML (`<header>`, `<nav>`, `<main>`, `<section>`, `<article>`, `<footer>`).
-  * Estilización personalizada con CSS puro o frameworks como Tailwind CSS / Bootstrap.
+  * Estilización con Tailwind CSS, compilado por Vite y cargado con `@vite` en los layouts.
   * Documentación con PHPDoc en controladores y métodos clave.
 
 ---

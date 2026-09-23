@@ -4,23 +4,22 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title }} · RestoCode</title>
-    <link rel="stylesheet" href="{{ url('css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ url('css/style.css') }}">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body>
+<body class="min-h-screen bg-white text-zinc-900 antialiased">
     <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container">
-                <a class="navbar-brand" href="{{ route('home') }}">RestoCode</a>
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('home') }}">Inicio</a>
+        <nav class="bg-zinc-900 text-white">
+            <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+                <a class="text-lg font-semibold" href="{{ route('home') }}">RestoCode</a>
+                <ul class="flex gap-6">
+                    <li>
+                        <a class="hover:text-zinc-300" href="{{ route('home') }}">Inicio</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url('/servicios') }}">Servicios</a>
+                    <li>
+                        <a class="hover:text-zinc-300" href="{{ url('/servicios') }}">Servicios</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url('/blog') }}">Blog</a>
+                    <li>
+                        <a class="hover:text-zinc-300" href="{{ url('/blog') }}">Blog</a>
                     </li>
                 </ul>
             </div>
@@ -28,8 +27,8 @@
     </header>
 
     @if (session()->has('feedback.message'))
-        <div class="container mt-3">
-            <div class="alert alert-success">
+        <div class="mx-auto mt-3 max-w-6xl px-4">
+            <div class="rounded border border-green-200 bg-green-50 px-4 py-3 text-green-800">
                 {{ session('feedback.message') }}
             </div>
         </div>
@@ -39,9 +38,9 @@
         {{ $slot }}
     </main>
 
-    <footer class="border-top py-4 mt-5">
-        <div class="container">
-            <p class="mb-0">RestoCode · soluciones digitales para gastronomía</p>
+    <footer class="mt-12 border-t border-zinc-200 py-4">
+        <div class="mx-auto max-w-6xl px-4">
+            <p>RestoCode · soluciones digitales para gastronomía</p>
         </div>
     </footer>
 </body>

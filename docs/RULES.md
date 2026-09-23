@@ -14,7 +14,7 @@ Hasta que el docente lo muestre en una clase:
 - Form Requests. La validación es `$request->validate()` en el controller.
 - Verbos PUT y DELETE. El formulario se muestra con GET y se procesa con POST.
 - Atributos de validación en el HTML (`required`, `min`, `max`). Los inputs pueden usar `type` (`text`, `date`, `password`).
-- Vite como camino del CSS. El diseño se enlaza desde `public/css`.
+- Bootstrap y hojas en `public/css`. El CSS entra por Vite y Tailwind.
 - Subida de archivos. En el docente la portada está marcada como "coming soon". `posts.image` es un string nullable.
 
 ## Rutas
@@ -87,18 +87,19 @@ Referencia: `movies/create.blade.php`, `movies/edit.blade.php` y `MoviesControll
 
 - Todo POST lleva `@csrf`. Los formularios del docente no lo tienen; sin esa línea Laravel 13 responde 419 y el `store` no corre.
 - Reglas en el controller, como string `'required|min:2'` o como array. El segundo argumento de `validate()` son los mensajes en español, con la clave `campo.regla`.
-- Si hay errores, un `alert` general cuando `$errors->any()`.
-- Cada input: `@class` con `is-invalid` si `$errors->has('campo')`, `old('campo')` en el value, y `@error('campo')` para el mensaje.
+- Si hay errores, un aviso general cuando `$errors->any()`, con utilidades de Tailwind (fondo y texto de error).
+- Cada input: `@class` que suma borde y texto de error si `$errors->has('campo')`, `old('campo')` en el value, y `@error('campo')` para el mensaje.
 - En edición, `old('campo', $modelo->campo)`.
-- El éxito viaja en sesión con la clave `feedback.message` y se muestra una sola vez, con el `alert` del layout, igual que en `main.blade.php`.
+- El éxito viaja en sesión con la clave `feedback.message` y se muestra una sola vez, con el aviso del layout, igual que en `main.blade.php`.
 
 ## CSS
 
-Referencia: `proyecto-docente/public/css/style.css` y el `<link>` de `main.blade.php`.
+Referencia: `resources/css/app.css`, `vite.config.js` y el `@vite` de `main.blade.php`.
 
-- Bootstrap desde `public/css/bootstrap.min.css`.
-- Lo propio va en `public/css/style.css`.
-- Los `<link>` usan `url('css/...')`.
+- Tailwind 4 entra con `@import 'tailwindcss'` en `resources/css/app.css`.
+- Cada layout lo carga con `@vite(['resources/css/app.css', 'resources/js/app.js'])`. El admin usa el mismo llamado.
+- Las clases de las vistas son utilidades de Tailwind. Lo que no sea una utilidad suelta se escribe en `resources/css/app.css`.
+- En desarrollo, `npm run dev`. Para el zip, `npm run build` e incluir `public/build/`: `.gitignore` lo excluye, y sin esa carpeta el sitio queda sin estilos.
 
 ## Autenticación (provisoria)
 
