@@ -14,35 +14,17 @@ Equivalencia con el ABM de películas del docente:
 
 `services` tiene, sin contar `id` ni las fechas de Laravel: `title`, `short_description`, `full_description`, `price`, `delivery_days`, `is_active`.
 
-## 1. Proyecto listo y home estática
+## 1. Proyecto listo y home estática — hecho
 
-Dejar Laravel 13 andando, con la base `apellido_nombre` en MySQL, y una home que solo presente el sitio.
+Laravel 13 + MySQL (`apellido_nombre`), home estática con layout `main`, Tailwind vía `@vite` y nav (Inicio, Servicios, Blog).
 
-Archivos: `.env`, `resources/views/components/layouts/main.blade.php`, `resources/views/home.blade.php`, `app/Http/Controllers/HomeController.php`, `routes/web.php`, `resources/css/app.css`. El layout carga Tailwind con `@vite`. En desarrollo, `npm run dev`.
+## 2. Migración y modelo Service — hecho
 
-Patrón: `HomeController@index` y `<x-layouts.main>` de `proyecto-docente/resources/views/welcome.blade.php` y `components/layouts/main.blade.php`. La nav queda en Inicio, Servicios y Blog.
+Tabla `services` y modelo con precio en centavos (`unsignedInteger` + `Attribute::make`). PK `id`.
 
-Probar: `php artisan migrate` y abrir `/`. Se ve el hero, la nav y el footer.
+## 3. ServiceSeeder — hecho
 
-## 2. Migración y modelo Service
-
-Crear la tabla y el modelo, con el precio guardado en centavos.
-
-Archivos: `database/migrations/*_create_services_table.php`, `app/Models/Service.php`.
-
-Patrón: migración de `movies` y `Movie::price()` con `Attribute::make`. La PK es `id`, como pide el PRD. Reglas de modelo en [RULES.md](RULES.md).
-
-Probar: `php artisan migrate` crea `services`.
-
-## 3. ServiceSeeder
-
-Cargar al menos tres servicios gastronómicos (menú QR, landing y web con reservas). Uno puede ir con `is_active` en falso para probar el filtro de la home más adelante.
-
-Archivos: `database/seeders/ServiceSeeder.php`, `database/seeders/DatabaseSeeder.php`.
-
-Patrón: `MovieSeeder` con `DB::table()->insert()` y `now()`, llamado con `$this->call()`.
-
-Probar: `php artisan migrate:fresh --seed` y ver filas en `services`. El precio en la tabla está en centavos.
+Tres servicios (menú QR, landing, web con reservas); uno con `is_active` falso. `DB::table()->insert()` + `now()`, registrado en `DatabaseSeeder`.
 
 ## 4. Listado de servicios
 
