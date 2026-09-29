@@ -34,15 +34,9 @@ Tres servicios (menú QR, landing, web con reservas); uno con `is_active` falso.
 
 `/servicios/{id}` con `ServicesController@show` (`Service::findOrFail`), ruta `services.show` con `whereNumber('id')` y vista `services/show.blade.php`: título, descripciones corta y completa, precio, días de entrega y enlace de vuelta al listado. El enlace del listado usa `route('services.show', ['id' => ...])`. Un id inexistente o no numérico responde 404.
 
-## 6. Home con servicios activos
+## 6. Home con servicios activos — hecho
 
-Sumar al hero la grilla de servicios con `is_active` verdadero.
-
-Archivos: `HomeController@index`, `resources/views/home.blade.php`.
-
-Patrón: el mismo `Service::all()` del listado, pasado a la vista con el segundo argumento de `view()`, como en `MoviesController@index`. La grilla repite el `@foreach` de `services/index.blade.php` y, adentro, `@if ($service->is_active)` deja solo los activos. Los botones del hero pasan de `url()` a `route('services.index')`. La vista sigue usando `<x-layouts.main>`. El controller suma PHPDoc.
-
-Probar: `/` muestra solo los servicios activos y el botón a `/servicios`. El servicio inactivo del seeder no aparece.
+`HomeController@index` pasa `Service::all()` a `home.blade.php`, que suma debajo del hero la grilla de servicios: el mismo `@foreach` de `services/index.blade.php` con `@if ($service->is_active)` adentro, con `h2` para la sección y `h3` por tarjeta. Los botones del hero usan `route('services.index')`. El controller tiene PHPDoc. El servicio inactivo del seeder no aparece en `/`.
 
 ## 7. Migración y modelo Post
 

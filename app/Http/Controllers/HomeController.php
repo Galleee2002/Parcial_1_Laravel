@@ -2,12 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Service;
 
+/**
+ * Página de inicio de RestoCode.
+ */
 class HomeController extends Controller
 {
+    /**
+     * Muestra la home con el hero y los servicios activos.
+     */
     public function index()
     {
-        return view('home');
+        $services = Service::all();
+
+        return view('home', [
+            'services' => $services,
+        ]);
     }
 }
