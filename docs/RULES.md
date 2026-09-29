@@ -99,7 +99,7 @@ Referencia: `resources/css/app.css`, `vite.config.js` y el `@vite` de `main.blad
 - Tailwind 4 entra con `@import 'tailwindcss'` en `resources/css/app.css`.
 - Cada layout lo carga con `@vite(['resources/css/app.css', 'resources/js/app.js'])`. El admin usa el mismo llamado.
 - Las clases de las vistas son utilidades de Tailwind. Lo que no sea una utilidad suelta se escribe en `resources/css/app.css`.
-- En desarrollo, `npm run dev`. Para el zip, `npm run build` e incluir `public/build/`: `.gitignore` lo excluye, y sin esa carpeta el sitio queda sin estilos.
+- En desarrollo, `pnpm dev`. Para el zip, `pnpm build` e incluir `public/build/`: `.gitignore` lo excluye, y sin esa carpeta el sitio queda sin estilos.
 
 ## Autenticación (provisoria)
 
