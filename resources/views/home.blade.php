@@ -124,21 +124,48 @@
         </div>
     </section>
 
-    <section class="mx-auto max-w-6xl px-4 py-12">
-        <h2 class="text-3xl font-semibold">Nuestros servicios</h2>
+    <section class="bg-zinc-950 text-zinc-50">
+        <div class="mx-auto max-w-6xl px-4 py-16 sm:py-20 lg:py-24">
+            <div class="flex items-center gap-2" aria-hidden="true">
+                <span class="h-px w-8 bg-blue-500"></span>
+                <span class="size-1.5 rounded-full bg-cyan-400"></span>
+            </div>
+            <h2 class="mt-5 text-3xl font-semibold tracking-tight text-balance text-zinc-50 sm:text-4xl">Nuestros servicios</h2>
 
-        <div class="mt-8 grid gap-6 md:grid-cols-3">
-            @foreach ($services as $service)
-                @if ($service->is_active)
-                    <article class="rounded border border-zinc-200 p-6">
-                        <h3 class="text-xl font-semibold">{{ $service->title }}</h3>
-                        <p class="mt-2 text-zinc-600">{{ $service->short_description }}</p>
-                        <p class="mt-4 text-lg font-medium">${{ $service->price }}</p>
-                        <p class="text-sm text-zinc-500">Entrega en {{ $service->delivery_days }} días</p>
-                        <a class="mt-4 inline-block underline" href="{{ route('services.show', ['id' => $service->id]) }}">Ver detalle</a>
-                    </article>
-                @endif
-            @endforeach
+            @php($activeServicesCount = $services->where('is_active', true)->count())
+            <div @class([
+                'mt-10 grid gap-5 sm:mt-12 md:grid-cols-2 lg:gap-6',
+                'xl:grid-cols-4' => $activeServicesCount === 4,
+                'lg:grid-cols-3' => $activeServicesCount !== 4,
+            ])>
+                @foreach ($services as $service)
+                    @if ($service->is_active)
+                        <article class="group relative flex h-full flex-col overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/60 p-6 transition-colors duration-300 hover:border-blue-500/40 hover:bg-zinc-900 sm:p-7">
+                            <div class="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-blue-500/0 to-transparent transition-colors duration-300 group-hover:via-blue-500/50" aria-hidden="true"></div>
+
+                            <h3 class="text-lg font-semibold tracking-tight text-zinc-50 sm:text-xl">{{ $service->title }}</h3>
+                            <p class="mt-3 text-sm leading-relaxed text-pretty text-zinc-400 sm:text-base">{{ $service->short_description }}</p>
+
+                            <div class="mt-auto pt-8">
+                                <div class="flex flex-wrap items-end justify-between gap-x-4 gap-y-2 border-t border-zinc-800 pt-5">
+                                    <p class="text-2xl font-semibold tracking-tight text-zinc-50 tabular-nums">${{ $service->price }}</p>
+                                    <p class="flex items-center gap-2 text-sm text-zinc-400">
+                                        <span class="size-1.5 shrink-0 rounded-full bg-cyan-400" aria-hidden="true"></span>
+                                        Entrega en {{ $service->delivery_days }} días
+                                    </p>
+                                </div>
+
+                                <a class="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-blue-400 transition-colors hover:text-blue-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-500" href="{{ route('services.show', ['id' => $service->id]) }}">
+                                    Ver detalle
+                                    <svg class="size-4 transition-transform duration-300 group-hover:translate-x-0.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                        <path fill-rule="evenodd" d="M3 10a.75.75 0 0 1 .75-.75h10.638l-3.96-3.71a.75.75 0 1 1 1.024-1.096l5.25 4.922a.75.75 0 0 1 0 1.096l-5.25 4.922a.75.75 0 1 1-1.024-1.096l3.96-3.71H3.75A.75.75 0 0 1 3 10Z" clip-rule="evenodd" />
+                                    </svg>
+                                </a>
+                            </div>
+                        </article>
+                    @endif
+                @endforeach
+            </div>
         </div>
     </section>
 </x-layouts.main>
