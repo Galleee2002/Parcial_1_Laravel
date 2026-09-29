@@ -38,13 +38,9 @@ Tres servicios (menú QR, landing, web con reservas); uno con `is_active` falso.
 
 `HomeController@index` pasa `Service::all()` a `home.blade.php`, que suma debajo del hero la grilla de servicios: el mismo `@foreach` de `services/index.blade.php` con `@if ($service->is_active)` adentro, con `h2` para la sección y `h3` por tarjeta. Los botones del hero usan `route('services.index')`. El controller tiene PHPDoc. El servicio inactivo del seeder no aparece en `/`.
 
-## 7. Migración y modelo Post
+## 7. Migración y modelo Post — hecho
 
-Crear `posts` con `title`, `summary`, `content`, `image` (nullable), `published_at` y `timestamps`.
-
-Archivos: `database/migrations/*_create_posts_table.php`, `app/Models/Post.php`.
-
-Patrón: migración de `movies`. `published_at` es un `date`, igual que `release_date`. `image` es un string nullable: el docente dejó la portada como "coming soon" y no se implementa subida de archivos.
+Tabla `posts` con `title` (`string` de 100), `summary` (`string`), `content` (`text`), `image` (`string` nullable, sin subida de archivos), `published_at` (`date`, como `release_date`) y `timestamps`. PK `id`. Modelo `Post` con `protected $fillable` de los cinco campos, sin accessors.
 
 Probar: `php artisan migrate` crea `posts`.
 
