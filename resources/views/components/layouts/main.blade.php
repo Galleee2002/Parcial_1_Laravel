@@ -8,18 +8,18 @@
 </head>
 <body class="min-h-screen bg-white text-zinc-900 antialiased">
     <header>
-        <nav class="bg-zinc-900 font-sans text-white" aria-label="Principal">
-            <div class="mx-auto flex max-w-6xl items-center justify-between gap-6 px-4 py-4">
-                <a class="shrink-0 text-lg font-semibold" href="{{ route('home') }}">RestoCode</a>
-                <ul class="flex items-center gap-4 text-sm font-medium text-zinc-200 md:gap-8">
+        <nav class="bg-zinc-900 text-white">
+            <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+                <a class="text-lg font-semibold" href="{{ route('home') }}">RestoCode</a>
+                <ul class="flex gap-6">
                     <li>
-                        <a class="whitespace-nowrap hover:text-zinc-300" href="{{ route('home') }}">Inicio</a>
+                        <a class="hover:text-zinc-300" href="{{ route('home') }}">Inicio</a>
                     </li>
                     <li>
-                        <a class="whitespace-nowrap hover:text-zinc-300" href="{{ route('services.index') }}">Servicios</a>
+                        <a class="hover:text-zinc-300" href="{{ route('services.index') }}">Servicios</a>
                     </li>
                     <li>
-                        <a class="whitespace-nowrap hover:text-zinc-300" href="{{ route('blog.index') }}">Blog</a>
+                        <a class="hover:text-zinc-300" href="{{ route('blog.index') }}">Blog</a>
                     </li>
                 </ul>
             </div>
