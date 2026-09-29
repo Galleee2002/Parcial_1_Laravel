@@ -48,21 +48,15 @@ Probar: `php artisan migrate` crea `posts`.
 
 Tres entradas sobre digitalización gastronómica (menú QR, reservas online, web del local) con `published_at` distintas e `image` en `null`. `DB::table()->insert()` + `now()`, registrado en `DatabaseSeeder` después de `ServiceSeeder`. `php artisan migrate:fresh --seed` deja tres servicios y tres entradas.
 
-## 9. Listado público del blog
+## 9. Listado público del blog — hecho
 
-Mostrar las entradas en `/blog`.
-
-Archivos: `PostsController@index` (o un controller de lectura aparte del admin), ruta `blog.index`, `resources/views/blog/index.blade.php`.
-
-Patrón: `movies/index.blade.php`, sin acciones de editar ni eliminar.
-
-Probar: `/blog` lista título, resumen y enlace al detalle.
+`/blog` con `PostsController@index` (`Post::all()`), controller de lectura separado del futuro `AdminPostsController`, ruta `blog.index` y vista `blog/index.blade.php`: un `<article>` por entrada con título (`h2`), fecha de publicación en `<time datetime>`, resumen y enlace al detalle. Del patrón `movies/index.blade.php` se toman el `@foreach` y los enlaces; la tabla queda para el admin y el listado usa tarjetas como `services/index.blade.php`. Sin `@auth` ni botones de alta, edición o baja. El nav del layout `main` pasa a `route('blog.index')`. El enlace al detalle usa `url('/blog/' . $post->id)` hasta que exista `blog.show` en el paso 10, como pasó con servicios entre los pasos 4 y 5.
 
 ## 10. Detalle de una entrada
 
 Mostrar una entrada en `/blog/{id}`.
 
-Archivos: método `show`, ruta `blog.show` con `whereNumber('id')`, `resources/views/blog/show.blade.php`.
+Archivos: método `show`, ruta `blog.show` con `whereNumber('id')`, `resources/views/blog/show.blade.php`. El enlace de `blog/index.blade.php` pasa de `url('/blog/' . $post->id)` a `route('blog.show', ['id' => $post->id])`.
 
 Patrón: `movies/show.blade.php`.
 

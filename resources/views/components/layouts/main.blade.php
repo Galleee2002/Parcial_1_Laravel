@@ -19,7 +19,7 @@
                         <a class="hover:text-zinc-300" href="{{ route('services.index') }}">Servicios</a>
                     </li>
                     <li>
-                        <a class="hover:text-zinc-300" href="{{ url('/blog') }}">Blog</a>
+                        <a class="hover:text-zinc-300" href="{{ route('blog.index') }}">Blog</a>
                     </li>
                 </ul>
             </div>
