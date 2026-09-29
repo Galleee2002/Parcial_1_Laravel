@@ -43,8 +43,8 @@ El proyecto cuenta con un panel de administración restringido que permite gesti
 ### C. Base de Datos
 * **Nombre de la Base de Datos:** `apellido_nombre` (o `apellido1_apellido2` si es en grupo).
 * **Tablas Requeridas:**
-  1. `users`:
-     * Campos: `id`, `email`, `password`, `created_at`, `updated_at`.
+  1. `users`: (la tabla que trae Laravel, sin modificar)
+     * Campos: `id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`.
   2. `services`: (Tabla de servicios con más de 5 campos específicos)
      * Campos: `id`, `title`, `short_description`, `full_description`, `price`, `delivery_days`, `is_active`, `created_at`, `updated_at`.
   3. `posts`: (Tabla para el blog)

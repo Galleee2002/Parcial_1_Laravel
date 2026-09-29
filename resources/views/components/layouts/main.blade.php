@@ -16,7 +16,7 @@
                         <a class="hover:text-zinc-300" href="{{ route('home') }}">Inicio</a>
                     </li>
                     <li>
-                        <a class="hover:text-zinc-300" href="{{ url('/servicios') }}">Servicios</a>
+                        <a class="hover:text-zinc-300" href="{{ route('services.index') }}">Servicios</a>
                     </li>
                     <li>
                         <a class="hover:text-zinc-300" href="{{ url('/blog') }}">Blog</a>

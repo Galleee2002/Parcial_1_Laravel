@@ -19,12 +19,8 @@ class Service extends Model
     public function price(): Attribute
     {
         return Attribute::make(
-            function ($value) {
-                return $value / 100;
-            },
-            function ($value) {
-                return $value * 100;
-            },
+            get: fn ($value) => $value / 100,
+            set: fn ($value) => $value * 100,
         );
     }
 }

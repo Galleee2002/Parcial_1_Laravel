@@ -1,10 +1,10 @@
 # Roadmap de RestoCode
 
-Este orden puede cambiar cuando el docente suba clases nuevas. Si una clase trae otra implementación (por ejemplo el login), se reemplaza el paso de este archivo y la regla correspondiente en [RULES.md](RULES.md). Hasta entonces, los pasos 16 a 19 quedan provisorios.
+Este orden puede cambiar cuando el docente suba clases nuevas. Si una clase trae otra implementación, se reemplaza el paso de este archivo y la regla correspondiente en [RULES.md](RULES.md). Los pasos 16 a 19 ya siguen el login que el docente implementó en `AuthController`.
 
 Acá está en qué orden se construye cada feature. Cómo se escribe el código está en [RULES.md](RULES.md). No se pasa al paso siguiente si el anterior no se puede abrir en el navegador.
 
-La base es `proyecto-docente` (Laravel 13). El skeleton Laravel 10 de la raíz no se usa. El dominio sale de [PRD.md](PRD.md): servicios para locales gastronómicos y un blog. El admin solo administra entradas.
+El proyecto es la raíz de este repositorio, en Laravel 13. `proyecto-docente` no se modifica ni se entrega: es la referencia de cómo escribe el docente (está en `.gitignore`). El dominio sale de [PRD.md](PRD.md): servicios para locales gastronómicos y un blog. El admin solo administra entradas.
 
 Equivalencia con el ABM de películas del docente:
 
@@ -20,7 +20,7 @@ Laravel 13 + MySQL (`apellido_nombre`), home estática con layout `main`, Tailwi
 
 ## 2. Migración y modelo Service — hecho
 
-Tabla `services` y modelo con precio en centavos (`unsignedInteger` + `Attribute::make`). PK `id`.
+Tabla `services` y modelo con precio en centavos (`unsignedInteger` + `Attribute::make` con `get:` y `set:` en arrow functions, como `Movie::price()`). PK `id`.
 
 ## 3. ServiceSeeder — hecho
 
@@ -40,7 +40,7 @@ Sumar al hero la grilla de servicios con `is_active` verdadero.
 
 Archivos: `HomeController@index`, `resources/views/home.blade.php`.
 
-Patrón: el mismo `Model::all()` del listado, filtrando activos. La vista sigue usando `<x-layouts.main>`.
+Patrón: el mismo `Service::all()` del listado, pasado a la vista con el segundo argumento de `view()`, como en `MoviesController@index`. La grilla repite el `@foreach` de `services/index.blade.php` y, adentro, `@if ($service->is_active)` deja solo los activos. Los botones del hero pasan de `url()` a `route('services.index')`. La vista sigue usando `<x-layouts.main>`. El controller suma PHPDoc.
 
 Probar: `/` muestra solo los servicios activos y el botón a `/servicios`. El servicio inactivo del seeder no aparece.
 
@@ -90,7 +90,7 @@ En `/`, debajo de los servicios, mostrar las tres entradas más recientes.
 
 Archivos: `HomeController@index`, `resources/views/home.blade.php`.
 
-Patrón: la consulta del listado de películas, ordenada por `published_at` descendente y limitada a 3.
+Patrón: `Post::all()`, como el listado de películas. Pendiente de definir al llegar a este paso: el docente no muestra cómo ordenar ni limitar, y [RULES.md](RULES.md) no permite hacerlo con el Query Builder ni con la `Collection`. Hay que elegir una forma que solo use técnicas vistas en clase o confirmar con el docente.
 
 Probar: `/` muestra tres novedades y el enlace a `/blog`.
 
@@ -110,7 +110,7 @@ Formulario y guardado en `/admin/posts/crear`.
 
 Archivos: `create`, `store`, rutas GET y POST `admin.posts.create` y `admin.posts.store`, `resources/views/admin/posts/create.blade.php`.
 
-Patrón: `MoviesController@store` y `movies/create.blade.php`. Campos: `title`, `summary`, `content`, `image`, `published_at`. Validación, `old()`, `@error` y feedback según [RULES.md](RULES.md). Incluir `@csrf`.
+Patrón: `MoviesController@store` y `movies/create.blade.php`. Campos: `title`, `summary`, `content`, `image`, `published_at`. Validación, `old()`, `@error`, atributos `aria-*` y feedback según [RULES.md](RULES.md). `$data` es lo que devuelve `validate()`; el docente usa `$request->input()`, pero en `AuthController` ya toma el retorno de `validate()`. Incluir `@csrf`.
 
 Probar: guardar una entrada válida redirige al listado con el mensaje de éxito. Un campo vacío vuelve al formulario con el error y los datos escritos.
 
@@ -134,43 +134,43 @@ Patrón: `movies/delete.blade.php` y `MoviesController@destroy`.
 
 Probar: el GET solo muestra la confirmación. El POST borra y vuelve al listado con el feedback. No hay botón de borrado en `/blog`.
 
-## 16. Usuario admin (provisorio)
+## 16. Usuario admin
 
-Cargar un usuario para entrar al panel. Se reescribe si la clase de login trae otro seeder.
+Cargar un usuario para entrar al panel.
 
 Archivos: `database/seeders/UserSeeder.php`, `DatabaseSeeder.php`.
 
-Patrón: `DB::table()->insert()` de `MovieSeeder`. La contraseña se guarda con `Hash::make`, como en `database/factories/UserFactory.php` del docente. La tabla `users` no se modifica.
+Patrón: `UserSeeder` del docente. `DB::table('users')->insert()` con `id`, `name`, `email` y `password` con `Hash::make`, más `created_at` y `updated_at` con `now()`. La tabla `users` no se modifica. `UserSeeder` va primero en `$this->call([...])`.
 
 Probar: `php artisan migrate:fresh --seed` crea el usuario. Anotar email y contraseña de prueba en un comentario del seeder para poder explicarlos.
 
-## 17. Login (provisorio)
+## 17. Login
 
-Pantalla `/admin/login` y acción que guarda el usuario en sesión. Se reemplaza por la clase de login cuando exista.
+Pantalla `/admin/login` y acción que inicia la sesión.
 
-Archivos: `LoginController` con el formulario y el `store`, rutas `admin.login` y `admin.login.store`, `resources/views/admin/login.blade.php`.
+Archivos: `AuthController` con `showForm` y `processForm`, rutas GET y POST `/admin/login` con los nombres `auth.login.form` y `auth.login.process`, `resources/views/auth/login.blade.php`.
 
-Patrón de formulario: `movies/create.blade.php` (`validate`, mensajes, `old()`, `@error`, `@csrf`). La sesión usa `session()`, el helper que el layout `main` del docente ya explica. Buscar el usuario por email y comprobar la contraseña con `Hash::check`. Si falla, volver atrás con un error. Si entra, regenerar la sesión y guardar `user_id`.
+Patrón: `AuthController@processForm` y `auth/login.blade.php` del docente. La vista usa `<x-layouts.main>`. `$credenciales = $request->validate(...)` con mensajes en español, y `Auth::attempt(['email' => ..., 'password' => ...])`. Si falla, `redirect()->route('auth.login.form')` con `feedback.message`, `feedback.type` `danger` y `->withInput()`. Si entra, `$request->session()->regenerate()` y redirección a `admin.posts.index` con feedback. El formulario lleva `@csrf`, `old('email')` y, como el email usa `type="email"`, `novalidate`.
 
-Probar: credenciales malas muestran el error. Credenciales buenas llegan a `/admin/posts`.
+Probar: credenciales malas vuelven al login con el aviso de error y el email escrito. Campos vacíos muestran los errores de validación. Credenciales buenas llegan a `/admin/posts`.
 
-## 18. Logout (provisorio)
+## 18. Logout
 
 Cerrar la sesión y volver al login.
 
-Archivos: método de logout en `LoginController`, ruta POST `admin.logout`, botón en el layout admin.
+Archivos: `processLogout` en `AuthController`, ruta POST `/admin/logout` con el nombre `auth.logout.process`, formulario en el layout admin.
 
-Patrón: `redirect()->route()` y el manejo de `session()` ya usado en el layout del docente.
+Patrón: `AuthController@processLogout` del docente: `Auth::logout()`, `$request->session()->invalidate()`, `$request->session()->regenerateToken()` y `redirect()->route('auth.login.form')` con feedback. El botón es el `<form method="post">` del nav del docente, con `@csrf` y `auth()->user()->email` en el texto.
 
-Probar: después de salir, `/admin/posts` no se abre y pide el login (cuando el paso 19 esté).
+Probar: después de salir aparece el feedback en el login y `/admin/posts` no se abre (cuando el paso 19 esté).
 
-## 19. Middleware del admin (provisorio)
+## 19. Protección del admin
 
-Cortar `/admin/posts` si no hay `user_id` en la sesión. No protege el login. Se reemplaza si la clase registra el middleware de otra forma.
+Cortar el ABM de entradas si no hay sesión. El login queda afuera.
 
-Archivos: `app/Http/Middleware/EnsureUserIsAuthenticated.php`, alias en el `withMiddleware` de `bootstrap/app.php`, `->middleware()` en las rutas del ABM.
+Archivos: `routes/web.php` (`->middleware('auth')` en cada ruta de `admin.posts.*`) y el `withMiddleware` de `bootstrap/app.php`.
 
-Patrón: el callback `withMiddleware` de `proyecto-docente/bootstrap/app.php` está vacío y es el lugar para registrarlo. Adentro solo se mira `session()->has('user_id')` y, si no está, `redirect()->route('admin.login')`.
+Patrón: las rutas de `movies` del docente, cada una con `->middleware('auth')`. En `bootstrap/app.php`, `$middleware->redirectGuestsTo(fn () => route('auth.login.form'))`, igual que el docente. Se usa el middleware `auth` de Laravel; no se escribe uno propio.
 
 Probar: sin sesión, crear, editar, eliminar y el listado redirigen a `/admin/login`. Con sesión, el ABM sigue funcionando. `/`, `/servicios` y `/blog` siguen públicos.
 
@@ -183,7 +183,8 @@ Checklist antes de comprimir:
 - Home con hero, servicios activos y tres novedades.
 - `/servicios` y `/servicios/{id}` leen la base.
 - `/blog` y `/blog/{id}` leen la base.
-- `/admin/login` es propio: sin Breeze, Jetstream ni controllers de autenticación de Laravel.
+- `/admin/login` es propio: `AuthController` con `Auth::attempt`, sin Breeze, Jetstream ni controllers de autenticación de Laravel.
+- Todo formulario POST tiene `@csrf`.
 - ABM de entradas con validación en PHP, errores en la vista y feedback de éxito.
 - Tres tablas creadas y cargadas con migraciones y seeders. Base llamada `apellido_nombre`.
 - `services` tiene más de cinco campos sin contar `id` ni `created_at` / `updated_at`.
