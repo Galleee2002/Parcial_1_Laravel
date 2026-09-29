@@ -11,7 +11,7 @@
                     <p class="mt-2 text-zinc-600">{{ $service->short_description }}</p>
                     <p class="mt-4 text-lg font-medium">${{ $service->price }}</p>
                     <p class="text-sm text-zinc-500">Entrega en {{ $service->delivery_days }} días</p>
-                    <a class="mt-4 inline-block underline" href="{{ url('/servicios/' . $service->id) }}">Ver detalle</a>
+                    <a class="mt-4 inline-block underline" href="{{ route('services.show', ['id' => $service->id]) }}">Ver detalle</a>
                 </article>
             @endforeach
         </div>

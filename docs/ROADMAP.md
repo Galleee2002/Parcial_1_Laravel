@@ -26,25 +26,13 @@ Tabla `services` y modelo con precio en centavos (`unsignedInteger` + `Attribute
 
 Tres servicios (menú QR, landing, web con reservas); uno con `is_active` falso. `DB::table()->insert()` + `now()`, registrado en `DatabaseSeeder`.
 
-## 4. Listado de servicios
+## 4. Listado de servicios — hecho
 
-Mostrar los servicios en `/servicios`.
+`/servicios` con `ServicesController@index` (`Service::all()`), ruta `services.index` y vista `services/index.blade.php`: título, descripción corta, precio en pesos, días de entrega y enlace al detalle. Sin botones de alta, edición ni baja.
 
-Archivos: `ServicesController@index`, ruta `services.index`, `resources/views/services/index.blade.php`.
+## 5. Detalle de un servicio — hecho
 
-Patrón: `MoviesController@index` y `movies/index.blade.php`. Sin botones de alta, edición ni baja.
-
-Probar: `/servicios` lista título, precio legible (el accessor divide por 100) y el enlace al detalle.
-
-## 5. Detalle de un servicio
-
-Mostrar un servicio en `/servicios/{id}`.
-
-Archivos: `ServicesController@show`, ruta `services.show` con `whereNumber('id')`, `resources/views/services/show.blade.php`.
-
-Patrón: `MoviesController@show` y `movies/show.blade.php`.
-
-Probar: `/servicios/1` muestra la descripción completa. Un id inexistente responde 404 con `findOrFail`. Un segmento que no es número no entra en esta ruta.
+`/servicios/{id}` con `ServicesController@show` (`Service::findOrFail`), ruta `services.show` con `whereNumber('id')` y vista `services/show.blade.php`: título, descripciones corta y completa, precio, días de entrega y enlace de vuelta al listado. El enlace del listado usa `route('services.show', ['id' => ...])`. Un id inexistente o no numérico responde 404.
 
 ## 6. Home con servicios activos
 
