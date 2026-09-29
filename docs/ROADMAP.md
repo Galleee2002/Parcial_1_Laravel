@@ -44,15 +44,9 @@ Tabla `posts` con `title` (`string` de 100), `summary` (`string`), `content` (`t
 
 Probar: `php artisan migrate` crea `posts`.
 
-## 8. PostSeeder
+## 8. PostSeeder — hecho
 
-Cargar al menos tres entradas sobre digitalización gastronómica.
-
-Archivos: `database/seeders/PostSeeder.php`, `DatabaseSeeder.php`.
-
-Patrón: `MovieSeeder`.
-
-Probar: `php artisan migrate:fresh --seed` deja servicios y entradas.
+Tres entradas sobre digitalización gastronómica (menú QR, reservas online, web del local) con `published_at` distintas e `image` en `null`. `DB::table()->insert()` + `now()`, registrado en `DatabaseSeeder` después de `ServiceSeeder`. `php artisan migrate:fresh --seed` deja tres servicios y tres entradas.
 
 ## 9. Listado público del blog
 
