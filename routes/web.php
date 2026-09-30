@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminPostsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\ServicesController;
@@ -12,3 +13,5 @@ Route::get('/servicios/{id}', [ServicesController::class, 'show'])->name('servic
 
 Route::get('/blog', [PostsController::class, 'index'])->name('blog.index');
 Route::get('/blog/{id}', [PostsController::class, 'show'])->name('blog.show')->whereNumber('id');
+
+Route::get('/admin/posts', [AdminPostsController::class, 'index'])->name('admin.posts.index');
