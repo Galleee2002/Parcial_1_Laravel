@@ -20,4 +20,16 @@ class PostsController extends Controller
             'posts' => $posts,
         ]);
     }
+
+    /**
+     * Muestra el detalle de una entrada. Responde 404 si el id no existe.
+     */
+    public function show(int $id)
+    {
+        $post = Post::findOrFail($id);
+
+        return view('blog.show', [
+            'post' => $post,
+        ]);
+    }
 }

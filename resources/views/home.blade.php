@@ -89,35 +89,43 @@
                         <span class="size-1.5 rounded-full bg-cyan-400"></span>
                         <span class="text-xs font-medium tracking-wider text-zinc-400 uppercase">Menú QR</span>
                     </div>
-                    @php
-                        $qrModule = function (int $r, int $c): ?string {
-                            if (($r < 7 && ($c < 7 || $c > 13)) || ($r > 13 && $c < 7)) {
-                                $lr = $r % 14;
-                                $lc = $c % 14;
-                                $center = $lr >= 2 && $lr <= 4 && $lc >= 2 && $lc <= 4;
+                    <div class="mt-3 rounded-md bg-zinc-100 p-1.5">
+                        <svg class="block w-full" viewBox="0 0 21 21" shape-rendering="crispEdges">
+                            <rect class="fill-zinc-950" width="7" height="7" />
+                            <rect class="fill-zinc-100" x="1" y="1" width="5" height="5" />
+                            <rect class="fill-blue-500" x="2" y="2" width="3" height="3" />
 
-                                if ($center) {
-                                    return $r < 7 && $c < 7 ? 'bg-blue-500' : 'bg-zinc-950';
-                                }
+                            <rect class="fill-zinc-950" x="14" width="7" height="7" />
+                            <rect class="fill-zinc-100" x="15" y="1" width="5" height="5" />
+                            <rect class="fill-zinc-950" x="16" y="2" width="3" height="3" />
 
-                                return in_array($lr, [0, 6]) || in_array($lc, [0, 6]) ? 'bg-zinc-950' : null;
-                            }
+                            <rect class="fill-zinc-950" y="14" width="7" height="7" />
+                            <rect class="fill-zinc-100" x="1" y="15" width="5" height="5" />
+                            <rect class="fill-zinc-950" x="2" y="16" width="3" height="3" />
 
-                            if (($r === 7 && ($c < 8 || $c > 12)) || ($r === 13 && $c < 8) || ($c === 7 && ($r < 8 || $r > 12)) || ($c === 13 && $r < 8)) {
-                                return null;
-                            }
-
-                            if ($r === 6 || $c === 6) {
-                                return ($r + $c) % 2 === 0 ? 'bg-zinc-950' : null;
-                            }
-
-                            return hexdec(md5("{$r}-{$c}")[0]) % 2 === 0 ? 'bg-zinc-950' : null;
-                        };
-                    @endphp
-                    <div class="mt-3 grid grid-cols-21 rounded-md bg-zinc-100 p-1.5">
-                        @foreach (range(0, 440) as $i)
-                            <span class="aspect-square {{ $qrModule(intdiv($i, 21), $i % 21) }}"></span>
-                        @endforeach
+                            <path class="fill-zinc-950" d="
+                                M9 0h1v1h-1z M11 0h1v1h-1z
+                                M8 1h1v1h-1z M10 1h1v1h-1z
+                                M12 2h1v1h-1z
+                                M9 3h2v1h-2z
+                                M8 4h1v1h-1z M11 4h1v1h-1z
+                                M9 5h1v1h-1z M12 5h1v1h-1z
+                                M8 6h1v1h-1z M10 6h1v1h-1z M12 6h1v1h-1z
+                                M0 8h1v1h-1z M2 8h1v1h-1z M4 8h1v1h-1z M6 8h1v1h-1z M8 8h2v1h-2z M11 8h1v1h-1z M14 8h1v1h-1z M16 8h1v1h-1z M19 8h1v1h-1z
+                                M1 9h1v1h-1z M3 9h1v1h-1z M10 9h1v1h-1z M13 9h1v1h-1z M17 9h1v1h-1z M20 9h1v1h-1z
+                                M0 10h1v1h-1z M5 10h2v1h-2z M8 10h1v1h-1z M12 10h1v1h-1z M15 10h1v1h-1z M18 10h1v1h-1z
+                                M2 11h1v1h-1z M4 11h1v1h-1z M9 11h1v1h-1z M11 11h1v1h-1z M14 11h1v1h-1z M16 11h1v1h-1z M20 11h1v1h-1z
+                                M1 12h1v1h-1z M3 12h1v1h-1z M6 12h1v1h-1z M10 12h1v1h-1z M13 12h1v1h-1z M17 12h1v1h-1z M19 12h1v1h-1z
+                                M8 13h1v1h-1z M12 13h1v1h-1z M15 13h1v1h-1z M18 13h1v1h-1z
+                                M9 14h1v1h-1z M11 14h1v1h-1z M14 14h1v1h-1z M16 14h1v1h-1z M20 14h1v1h-1z
+                                M10 15h1v1h-1z M13 15h1v1h-1z M17 15h1v1h-1z M19 15h1v1h-1z
+                                M8 16h1v1h-1z M12 16h1v1h-1z M15 16h1v1h-1z M18 16h1v1h-1z
+                                M9 17h1v1h-1z M11 17h1v1h-1z M14 17h1v1h-1z M20 17h1v1h-1z
+                                M10 18h1v1h-1z M13 18h1v1h-1z M16 18h1v1h-1z M19 18h1v1h-1z
+                                M8 19h1v1h-1z M12 19h1v1h-1z M15 19h1v1h-1z M17 19h1v1h-1z
+                                M9 20h1v1h-1z M11 20h1v1h-1z M14 20h1v1h-1z M18 20h1v1h-1z M20 20h1v1h-1z
+                            " />
+                        </svg>
                     </div>
                 </div>
             </div>
@@ -132,12 +140,7 @@
             </div>
             <h2 class="mt-5 text-3xl font-semibold tracking-tight text-balance text-zinc-50 sm:text-4xl">Nuestros servicios</h2>
 
-            @php($activeServicesCount = $services->where('is_active', true)->count())
-            <div @class([
-                'mt-10 grid gap-5 sm:mt-12 md:grid-cols-2 lg:gap-6',
-                'xl:grid-cols-4' => $activeServicesCount === 4,
-                'lg:grid-cols-3' => $activeServicesCount !== 4,
-            ])>
+            <div class="mt-10 grid gap-5 sm:mt-12 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
                 @foreach ($services as $service)
                     @if ($service->is_active)
                         <article class="group relative flex h-full flex-col overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/60 p-6 transition-colors duration-300 hover:border-blue-500/40 hover:bg-zinc-900 sm:p-7">

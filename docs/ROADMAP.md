@@ -52,15 +52,9 @@ Tres entradas sobre digitalización gastronómica (menú QR, reservas online, we
 
 `/blog` con `PostsController@index` (`Post::all()`), controller de lectura separado del futuro `AdminPostsController`, ruta `blog.index` y vista `blog/index.blade.php`: un `<article>` por entrada con título (`h2`), fecha de publicación en `<time datetime>`, resumen y enlace al detalle. Del patrón `movies/index.blade.php` se toman el `@foreach` y los enlaces; la tabla queda para el admin y el listado usa tarjetas como `services/index.blade.php`. Sin `@auth` ni botones de alta, edición o baja. El nav del layout `main` pasa a `route('blog.index')`. El enlace al detalle usa `url('/blog/' . $post->id)` hasta que exista `blog.show` en el paso 10, como pasó con servicios entre los pasos 4 y 5.
 
-## 10. Detalle de una entrada
+## 10. Detalle de una entrada — hecho
 
-Mostrar una entrada en `/blog/{id}`.
-
-Archivos: método `show`, ruta `blog.show` con `whereNumber('id')`, `resources/views/blog/show.blade.php`. El enlace de `blog/index.blade.php` pasa de `url('/blog/' . $post->id)` a `route('blog.show', ['id' => $post->id])`.
-
-Patrón: `movies/show.blade.php`.
-
-Probar: `/blog/1` muestra el contenido. Un id inexistente responde 404.
+`/blog/{id}` con `PostsController@show` (`Post::findOrFail`, con PHPDoc), ruta `blog.show` con `whereNumber('id')` y vista `blog/show.blade.php`: enlace de vuelta al blog, título, resumen, fecha de publicación en `<dl>` con `<time datetime>` y contenido con `whitespace-pre-line` para respetar los saltos de línea sin `{!! !!}`. Sigue el patrón de `movies/show.blade.php` con las clases de `services/show.blade.php`; `image` no se muestra mientras el seeder la deje en `null`. El enlace de `blog/index.blade.php` pasa a `route('blog.show', ['id' => $post->id])`. Un id inexistente o no numérico responde 404.
 
 ## 11. Home con las últimas tres entradas
 

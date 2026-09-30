@@ -13,7 +13,7 @@
                         Publicado el <time datetime="{{ $post->published_at }}">{{ $post->published_at }}</time>
                     </p>
                     <p class="mt-2 text-zinc-600">{{ $post->summary }}</p>
-                    <a class="mt-4 inline-block underline" href="{{ url('/blog/' . $post->id) }}">Leer entrada</a>
+                    <a class="mt-4 inline-block underline" href="{{ route('blog.show', ['id' => $post->id]) }}">Leer entrada</a>
                 </article>
             @endforeach
         </div>

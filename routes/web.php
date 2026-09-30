@@ -11,3 +11,4 @@ Route::get('/servicios', [ServicesController::class, 'index'])->name('services.i
 Route::get('/servicios/{id}', [ServicesController::class, 'show'])->name('services.show')->whereNumber('id');
 
 Route::get('/blog', [PostsController::class, 'index'])->name('blog.index');
+Route::get('/blog/{id}', [PostsController::class, 'show'])->name('blog.show')->whereNumber('id');
