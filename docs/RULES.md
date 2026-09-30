@@ -14,7 +14,7 @@ Cuando el parcial obliga a apartarse del docente, la regla lo dice y explica por
 - Form Requests. La validación es `$request->validate()` en el controller.
 - Verbos PUT y DELETE. El formulario se muestra con GET y se procesa con POST.
 - Validación del navegador. No se usan atributos como `required`, `min` o `max`. Los inputs pueden usar `type` (`text`, `email`, `date`, `password`); como `type="email"` activa la validación del navegador, el formulario que lo tenga lleva `novalidate`.
-- Filtrar, ordenar o limitar consultas, ni con el Query Builder (`Model::where()`, `orderBy()`, `limit()`) ni con métodos de la `Collection` (`where`, `sortByDesc`, `take`). El docente no lo muestra. Ver "Vistas" para cómo se muestra solo una parte de un listado.
+- Filtrar, ordenar o limitar consultas, ni con el Query Builder (`Model::where()`, `orderBy()`, `limit()`) ni con métodos de la `Collection` (`where`, `sortByDesc`, `take`). El docente no lo muestra. Ver "Vistas" para cómo se muestra solo una parte de un listado. Única excepción: la home, porque el parcial pide "las últimas 3 entradas del blog" y con `Post::all()` + `@if` no se puede saber cuáles son las más recientes. `HomeController` usa `Post::orderBy('published_at', 'desc')->limit(3)->get()`; el resto del sitio sigue con `all()`.
 - Bootstrap y hojas en `public/css`. El docente todavía las usa, pero el parcial pide Tailwind cargado por Vite.
 - Subida de archivos. En el docente la portada está marcada como "coming soon" y el `AuthController` la deja como TODO. `posts.image` es un string nullable.
 
@@ -35,7 +35,7 @@ Referencia: `proyecto-docente/app/Http/Controllers/MoviesController.php`, `HomeC
 
 - La clase extiende `Controller` y el nombre termina en `Controller`.
 - Un controller por responsabilidad. La home no lista el ABM. El ABM de entradas no renderiza el sitio público. El login vive en `AuthController`.
-- Lectura: `Model::all()`, `find` o `findOrFail`. Pasar datos con el segundo argumento de `view('carpeta.vista', ['clave' => $valor])`.
+- Lectura: `Model::all()`, `find` o `findOrFail` (salvo las novedades de la home, ver "Qué no se usa"). Pasar datos con el segundo argumento de `view('carpeta.vista', ['clave' => $valor])`.
 - Escritura: `Model::create($data)`, `$modelo->update($data)`, `$modelo->delete()`.
 - `$data` es lo que devuelve `$request->validate()`, como `$credenciales` en `AuthController`. No se usa `$_POST` ni `$request->input()` para guardar.
 - Después de crear, editar o borrar: `redirect()->route('...')->with('feedback.message', '...')`.

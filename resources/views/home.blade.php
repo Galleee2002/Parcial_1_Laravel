@@ -171,4 +171,32 @@
             </div>
         </div>
     </section>
+
+    <section class="border-t border-zinc-800 bg-zinc-950 text-zinc-50">
+        <div class="mx-auto max-w-6xl px-4 py-16 sm:py-20 lg:py-24">
+            <div class="flex items-center gap-2" aria-hidden="true">
+                <span class="h-px w-8 bg-blue-500"></span>
+                <span class="size-1.5 rounded-full bg-cyan-400"></span>
+            </div>
+
+            <div class="mt-5 flex flex-wrap items-end justify-between gap-4">
+                <h2 class="text-3xl font-semibold tracking-tight text-balance text-zinc-50 sm:text-4xl">Novedades</h2>
+                <a class="text-sm font-semibold text-blue-400 transition-colors hover:text-blue-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-500" href="{{ route('blog.index') }}">Ver todas las entradas</a>
+            </div>
+
+            <div class="mt-10 grid gap-5 sm:mt-12 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+                @foreach ($posts as $post)
+                    <article class="flex h-full flex-col rounded-xl border border-zinc-800 bg-zinc-900/60 p-6 transition-colors duration-300 hover:border-blue-500/40 hover:bg-zinc-900 sm:p-7">
+                        <p class="text-sm text-zinc-400">
+                            <time datetime="{{ $post->published_at }}">{{ $post->published_at }}</time>
+                        </p>
+                        <h3 class="mt-2 text-lg font-semibold tracking-tight text-zinc-50 sm:text-xl">{{ $post->title }}</h3>
+                        <p class="mt-3 text-sm leading-relaxed text-pretty text-zinc-400 sm:text-base">{{ $post->summary }}</p>
+
+                        <a class="mt-auto pt-6 text-sm font-semibold text-blue-400 transition-colors hover:text-blue-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-500" href="{{ route('blog.show', ['id' => $post->id]) }}">Leer entrada</a>
+                    </article>
+                @endforeach
+            </div>
+        </div>
+    </section>
 </x-layouts.main>

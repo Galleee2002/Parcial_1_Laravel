@@ -56,15 +56,9 @@ Tres entradas sobre digitalización gastronómica (menú QR, reservas online, we
 
 `/blog/{id}` con `PostsController@show` (`Post::findOrFail`, con PHPDoc), ruta `blog.show` con `whereNumber('id')` y vista `blog/show.blade.php`: enlace de vuelta al blog, título, resumen, fecha de publicación en `<dl>` con `<time datetime>` y contenido con `whitespace-pre-line` para respetar los saltos de línea sin `{!! !!}`. Sigue el patrón de `movies/show.blade.php` con las clases de `services/show.blade.php`; `image` no se muestra mientras el seeder la deje en `null`. El enlace de `blog/index.blade.php` pasa a `route('blog.show', ['id' => $post->id])`. Un id inexistente o no numérico responde 404.
 
-## 11. Home con las últimas tres entradas
+## 11. Home con las últimas tres entradas — hecho
 
-En `/`, debajo de los servicios, mostrar las tres entradas más recientes.
-
-Archivos: `HomeController@index`, `resources/views/home.blade.php`.
-
-Patrón: `Post::all()`, como el listado de películas. Pendiente de definir al llegar a este paso: el docente no muestra cómo ordenar ni limitar, y [RULES.md](RULES.md) no permite hacerlo con el Query Builder ni con la `Collection`. Hay que elegir una forma que solo use técnicas vistas en clase o confirmar con el docente.
-
-Probar: `/` muestra tres novedades y el enlace a `/blog`.
+`HomeController@index` suma `Post::orderBy('published_at', 'desc')->limit(3)->get()` y lo pasa a `home.blade.php` como `posts`, con el PHPDoc actualizado. Es la excepción a la regla de no ordenar ni limitar que está en [RULES.md](RULES.md): el parcial pide "las últimas 3 entradas" y con `Post::all()` + `@if` no se puede saber cuáles son las más recientes. Se ordena por `published_at` porque el seeder carga todas las entradas con el mismo `now()`. Debajo de los servicios, la home suma la sección "Novedades" (`h2`), con el mismo estilo que la grilla de servicios: un `<article>` por entrada con fecha en `<time datetime>`, título (`h3`), resumen y enlace a `route('blog.show', ['id' => $post->id])`, más el enlace "Ver todas las entradas" a `route('blog.index')`. Sin `@if` en la vista: el controller ya pasa solo tres entradas. Con el seeder se ven, en orden, las del 2026-09-20, 2026-09-02 y 2026-08-10.
 
 ## 12. Layout admin y tabla de entradas
 
