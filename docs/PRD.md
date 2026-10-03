@@ -22,10 +22,10 @@ El proyecto cuenta con un panel de administración restringido que permite gesti
 ### A. Sitio Público (Usuarios)
 1. **Home (`/`):**
    * **Hero Section:** Presentación del servicio enfocado en gastronomía con un botón CTA ("Ver Servicios").
-   * **Sección de Servicios:** Grilla con los servicios activos, leídos de la base de datos.
+   * **Sección de Servicios:** Lista numerada con los servicios activos, leídos de la base de datos.
    * **Novedades Recientes:** Muestra las últimas 3 entradas del blog traídas dinámicamente desde la base de datos.
 2. **Servicios (`/servicios` y `/servicios/{id}`):**
-   * Presentación de paquetes (Menú QR Básico, Web Landing Gastronómica, Web Premium + Reservas).
+   * Presentación de paquetes (Menú QR Básico, Web Landing Gastronómica, Pedidos Online, Menú QR Multilenguaje, Web Premium + Reservas).
    * Vista de detalle de cada servicio.
 3. **Blog / Novedades (`/blog` y `/blog/{id}`):**
    * Listado de artículos sobre tendencias, consejos y estrategias para gastronómicos.

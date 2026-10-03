@@ -16,7 +16,7 @@ Cuando el parcial obliga a apartarse del docente, la regla lo dice y explica por
 - Validación del navegador. No se usan atributos como `required`, `min` o `max`. Los inputs pueden usar `type` (`text`, `email`, `date`, `password`); como `type="email"` activa la validación del navegador, el formulario que lo tenga lleva `novalidate`.
 - Filtrar, ordenar o limitar consultas, ni con el Query Builder (`Model::where()`, `orderBy()`, `limit()`) ni con métodos de la `Collection` (`where`, `sortByDesc`, `take`). El docente no lo muestra. Ver "Vistas" para cómo se muestra solo una parte de un listado. Única excepción: la home, porque el parcial pide "las últimas 3 entradas del blog" y con `Post::all()` + `@if` no se puede saber cuáles son las más recientes. `HomeController` usa `Post::orderBy('published_at', 'desc')->limit(3)->get()`; el resto del sitio sigue con `all()`.
 - Bootstrap y hojas en `public/css`. El docente las carga en sus layouts (su proyecto trae Tailwind y Vite instalados, pero no los usa). La consigna permite Bootstrap o Tailwind; RestoCode usa Tailwind cargado por Vite.
-- Subida de archivos. El docente ya la muestra (`MoviesController` con `hasFile()`, `store()` y `Storage::delete()`, columnas `cover` y `cover_description`), pero la consigna no la pide. Las entradas no llevan imagen.
+- Subida de archivos. El docente ya la muestra (`MoviesController` con `hasFile()`, `store()` y `Storage::delete()`, columnas `cover` y `cover_description`), pero la consigna no la pide. Las entradas no llevan imagen en la base. Las cards de "Novedades" de la home usan imágenes fijas de `public/img` (`card-1.webp`, `card-2.webp`, `card-3.webp`) elegidas por posición con `$loop->iteration`; son decoración de la vista, no un campo de `posts`.
 
 ## Rutas
 
@@ -110,6 +110,7 @@ Referencia: `resources/css/app.css`, `vite.config.js` y el `@vite` de `main.blad
 - Tailwind 4 entra con `@import 'tailwindcss'` en `resources/css/app.css`.
 - Cada layout lo carga con `@vite(['resources/css/app.css', 'resources/js/app.js'])`. El admin usa el mismo llamado.
 - Las clases de las vistas son utilidades de Tailwind. Lo que no sea una utilidad suelta se escribe en `resources/css/app.css`.
+- Íconos con Lucide (paquete `lucide` de npm). En `resources/js/app.js` se importa `createIcons` junto con cada ícono que se usa, y en la vista se escribe `<i data-lucide="nombre-del-icono"></i>`. Solo se registran los íconos que aparecen en las vistas. Un enlace que solo tiene un ícono lleva `aria-label`.
 - En desarrollo, `pnpm dev`. Para el zip, `pnpm build` e incluir `public/build/`: `.gitignore` lo excluye, y sin esa carpeta el sitio queda sin estilos.
 
 ## Autenticación

@@ -26,7 +26,7 @@ Tabla `services` y modelo con precio en centavos (`unsignedInteger` + `Attribute
 
 ## 3. ServiceSeeder — hecho
 
-Tres servicios (menú QR, landing, web con reservas); uno con `is_active` falso. `DB::table()->insert()` + `now()`, registrado en `DatabaseSeeder`.
+Cinco servicios (menú QR, landing, pedidos online, menú QR multilenguaje y web con reservas); el último, la web con reservas, tiene `is_active` falso. Los activos van primero para que la numeración de la home (`$loop->iteration`) quede correlativa. `DB::table()->insert()` + `now()`, registrado en `DatabaseSeeder`.
 
 ## 4. Listado de servicios — hecho
 
@@ -38,7 +38,7 @@ Tres servicios (menú QR, landing, web con reservas); uno con `is_active` falso.
 
 ## 6. Home con servicios activos — hecho
 
-`HomeController@index` pasa `Service::all()` a `home.blade.php`, que suma debajo del hero la grilla de servicios: el mismo `@foreach` de `services/index.blade.php` con `@if ($service->is_active)` adentro, con `h2` para la sección y `h3` por tarjeta. El botón del hero usa `route('services.index')`. El controller tiene PHPDoc. El servicio inactivo del seeder no aparece en `/`.
+`HomeController@index` pasa `Service::all()` a `home.blade.php`, que suma debajo del hero la lista de servicios: el mismo `@foreach` de `services/index.blade.php` con `@if ($service->is_active)` adentro, con `h2` para la sección y `h3` por fila. Cada fila es un `<article>` horizontal sin fondo propio, separado con `border-b`: número (`0{{ $loop->iteration }}`, en `text-blue-600` como el botón del hero), título, descripción corta y un enlace circular al detalle con el ícono `arrow-up-right` de Lucide y `aria-label`. Al pasar el mouse, la fila se pone en `bg-zinc-900` con `group` / `group-hover:`. Precio y días de entrega quedan para `/servicios`. El botón del hero usa `route('services.index')`. El controller tiene PHPDoc. El servicio inactivo del seeder no aparece en `/`.
 
 ## 7. Migración y modelo Post — hecho
 
@@ -48,7 +48,7 @@ Probar: `php artisan migrate` crea `posts`.
 
 ## 8. PostSeeder — hecho
 
-Tres entradas sobre digitalización gastronómica (menú QR, reservas online, web del local) con `published_at` distintas. `DB::table()->insert()` + `now()`, registrado en `DatabaseSeeder` después de `ServiceSeeder`. `php artisan migrate:fresh --seed` deja tres servicios y tres entradas.
+Tres entradas sobre digitalización gastronómica (menú QR, reservas online, web del local) con `published_at` distintas. `DB::table()->insert()` + `now()`, registrado en `DatabaseSeeder` después de `ServiceSeeder`. `php artisan migrate:fresh --seed` deja cinco servicios y tres entradas.
 
 ## 9. Listado público del blog — hecho
 
@@ -60,7 +60,7 @@ Tres entradas sobre digitalización gastronómica (menú QR, reservas online, we
 
 ## 11. Home con las últimas tres entradas — hecho
 
-`HomeController@index` suma `Post::orderBy('published_at', 'desc')->limit(3)->get()` y lo pasa a `home.blade.php` como `posts`, con el PHPDoc actualizado. Es la excepción a la regla de no ordenar ni limitar que está en [RULES.md](RULES.md): el parcial pide "las últimas 3 entradas" y con `Post::all()` + `@if` no se puede saber cuáles son las más recientes. Se ordena por `published_at` porque el seeder carga todas las entradas con el mismo `now()`. Debajo de los servicios, la home suma la sección "Novedades" (`h2`), con el mismo estilo que la grilla de servicios: un `<article>` por entrada con fecha en `<time datetime>`, título (`h3`), resumen y enlace a `route('blog.show', ['id' => $post->id])`, más el enlace "Ver todas las entradas" a `route('blog.index')`. Sin `@if` en la vista: el controller ya pasa solo tres entradas. Con el seeder se ven, en orden, las del 2026-09-20, 2026-09-02 y 2026-08-10.
+`HomeController@index` suma `Post::orderBy('published_at', 'desc')->limit(3)->get()` y lo pasa a `home.blade.php` como `posts`, con el PHPDoc actualizado. Es la excepción a la regla de no ordenar ni limitar que está en [RULES.md](RULES.md): el parcial pide "las últimas 3 entradas" y con `Post::all()` + `@if` no se puede saber cuáles son las más recientes. Se ordena por `published_at` porque el seeder carga todas las entradas con el mismo `now()`. Debajo de los servicios, la home suma la sección "Novedades" (`h2`): un `<article>` cuadrado (`aspect-square`) por entrada con fecha en `<time datetime>`, título (`h3`) y resumen. Toda la card es un enlace a `route('blog.show', ['id' => $post->id])`: el `<a>` va dentro del `<article>` con `h-full` y, al pasar el mouse, subraya el título con `group-hover:underline`; más el enlace "Ver todas las entradas" a `route('blog.index')`. El fondo de cada card es una imagen fija de `public/img` elegida por posición (`card-{{ $loop->iteration }}.webp`, en `style="background-image: ..."`), con un degradado oscuro abajo para leer el texto, como el hero. No sale de la base ni se sube desde el admin: es decoración de la home. Si falta la imagen, queda el fondo `bg-zinc-900`. Sin `@if` en la vista: el controller ya pasa solo tres entradas. Con el seeder se ven, en orden, las del 2026-09-20, 2026-09-02 y 2026-08-10.
 
 ## 12. Layout admin y tabla de entradas — hecho
 
@@ -84,7 +84,7 @@ La consigna no pide imagen en las entradas, así que la columna y el campo del f
 
 ## 17. Usuario admin — hecho
 
-`database/seeders/UserSeeder.php` carga el usuario del panel con `DB::table('users')->insert()`: `id` 1, `name` "Admin RestoCode", `email` `admin@restocode.com` y `password` con `Hash::make('restocode')`. Sigue el `UserSeeder` del docente; como él no carga `created_at` ni `updated_at`, acá se suman con `now()`, como en `MovieSeeder` y en los otros seeders, para que ninguna fecha quede en `null`. El email y la contraseña de prueba quedan en un comentario del seeder para poder explicarlos. `email_verified_at` y `remember_token` quedan en `null`. La tabla `users` y el modelo `User` no se modifican. `UserSeeder` va primero en el `$this->call([...])` de `DatabaseSeeder`, antes de `ServiceSeeder` y `PostSeeder`. `php artisan migrate:fresh --seed` deja un usuario, tres servicios y tres entradas, y `Hash::check('restocode', $user->password)` da `true`. Entrar con ese usuario se prueba en el paso 18.
+`database/seeders/UserSeeder.php` carga el usuario del panel con `DB::table('users')->insert()`: `id` 1, `name` "Admin RestoCode", `email` `admin@restocode.com` y `password` con `Hash::make('restocode')`. Sigue el `UserSeeder` del docente; como él no carga `created_at` ni `updated_at`, acá se suman con `now()`, como en `MovieSeeder` y en los otros seeders, para que ninguna fecha quede en `null`. El email y la contraseña de prueba quedan en un comentario del seeder para poder explicarlos. `email_verified_at` y `remember_token` quedan en `null`. La tabla `users` y el modelo `User` no se modifican. `UserSeeder` va primero en el `$this->call([...])` de `DatabaseSeeder`, antes de `ServiceSeeder` y `PostSeeder`. `php artisan migrate:fresh --seed` deja un usuario, cinco servicios y tres entradas, y `Hash::check('restocode', $user->password)` da `true`. Entrar con ese usuario se prueba en el paso 18.
 
 ## 18. Login — hecho
 

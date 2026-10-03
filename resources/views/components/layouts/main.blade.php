@@ -18,6 +18,10 @@
         </nav>
     </header>
 
+    @isset($hero)
+        {{ $hero }}
+    @endisset
+
     <main class="mx-auto w-full max-w-6xl flex-1 px-4 py-8">
         @if (session()->has('feedback.message'))
             <div @class([
