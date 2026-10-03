@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminPostsController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\ServicesController;
@@ -13,6 +14,9 @@ Route::get('/servicios/{id}', [ServicesController::class, 'show'])->name('servic
 
 Route::get('/blog', [PostsController::class, 'index'])->name('blog.index');
 Route::get('/blog/{id}', [PostsController::class, 'show'])->name('blog.show')->whereNumber('id');
+
+Route::get('/admin/login', [AuthController::class, 'showForm'])->name('auth.login.form');
+Route::post('/admin/login', [AuthController::class, 'processForm'])->name('auth.login.process');
 
 Route::get('/admin/posts', [AdminPostsController::class, 'index'])->name('admin.posts.index');
 Route::get('/admin/posts/crear', [AdminPostsController::class, 'create'])->name('admin.posts.create');
