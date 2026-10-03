@@ -17,6 +17,7 @@ Route::get('/blog/{id}', [PostsController::class, 'show'])->name('blog.show')->w
 
 Route::get('/admin/login', [AuthController::class, 'showForm'])->name('auth.login.form');
 Route::post('/admin/login', [AuthController::class, 'processForm'])->name('auth.login.process');
+Route::post('/admin/logout', [AuthController::class, 'processLogout'])->name('auth.logout.process');
 
 Route::get('/admin/posts', [AdminPostsController::class, 'index'])->name('admin.posts.index');
 Route::get('/admin/posts/crear', [AdminPostsController::class, 'create'])->name('admin.posts.create');

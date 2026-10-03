@@ -90,15 +90,9 @@ La consigna no pide imagen en las entradas, así que la columna y el campo del f
 
 `/admin/login` con `AuthController@showForm` (muestra el formulario) y `AuthController@processForm` (valida e inicia la sesión), ambos con PHPDoc, rutas GET y POST `auth.login.form` y `auth.login.process` sin middleware, y vista `auth/login.blade.php` con `<x-layouts.main>`. El docente usa la URL `/iniciar-sesion`; acá va bajo `/admin` con los mismos nombres de ruta. Sigue el patrón de `AuthController@processForm` y `auth/login.blade.php` del docente: `$credentials = $request->validate(...)` con `email` (`required|email`) y `password` (`required`), con mensajes en español porque la consigna pide informar los errores, y `Auth::attempt($credentials)`, que es la versión activa del docente. Si falla, vuelve a `auth.login.form` con `feedback.message`, `feedback.type` `danger` y `->withInput()`, que no reenvía la contraseña. Si entra, `$request->session()->regenerate()` (excepción al docente, ver [RULES.md](RULES.md)) y redirección a `admin.posts.index` con "Sesión iniciada con éxito. ¡Hola de nuevo!". El formulario sigue el patrón de `admin/posts/create.blade.php`: aviso general con `$errors->any()`, `@class`, `@error` con `aria-invalid` y `aria-errormessage`, `@csrf`, `old('email')` (la contraseña no se rellena) y `novalidate`, porque el email usa `type="email"`. El aviso de credenciales incorrectas lo muestra el bloque de `feedback.message` del layout `main`. Campos vacíos muestran "El email es obligatorio." y "La contraseña es obligatoria."; un email sin formato muestra su error; una contraseña incorrecta vuelve con el aviso rojo y el email escrito; `admin@restocode.com` / `restocode` llega a `/admin/posts` con el mensaje de bienvenida y la cookie de sesión cambia. El nav público no enlaza al login: se entra escribiendo `/admin/login`. Hasta el paso 20, `/admin/posts` sigue abriendo sin sesión.
 
-## 19. Logout
+## 19. Logout — hecho
 
-Cerrar la sesión y volver al login.
-
-Archivos: `processLogout` en `AuthController`, ruta POST `/admin/logout` (en el docente, `/cerrar-session`) con el nombre `auth.logout.process`, formulario en el layout admin.
-
-Patrón: `AuthController@processLogout` del docente: `Auth::logout()`, `$request->session()->invalidate()`, `$request->session()->regenerateToken()` y `redirect()->route('auth.login.form')` con feedback. El botón es el `<form method="post">` del nav del docente, con `@csrf` y `auth()->user()->email` en el texto.
-
-Probar: después de salir aparece el feedback en el login y `/admin/posts` no se abre (cuando el paso 20 esté).
+`AuthController@processLogout` (con PHPDoc) y ruta POST `/admin/logout` con el nombre `auth.logout.process`, sin middleware. El docente usa la URL `/cerrar-session`; acá va bajo `/admin` con el mismo nombre de ruta. Sigue el patrón de `AuthController@processLogout` del docente: `Auth::logout()`, `$request->session()->invalidate()`, `$request->session()->regenerateToken()` y redirección a `auth.login.form` con "Sesión cerrada con éxito. ¡Te esperamos pronto!", que el bloque de `feedback.message` del layout `main` muestra en verde. El botón es un `<li>` nuevo en el nav del layout `admin`, debajo de "Ver sitio": un `<form method="post">` con `@csrf` y un `<button>` con `auth()->user()->email` en el texto. Va dentro de `@auth`, como el nav del docente, porque hasta el paso 20 `/admin/posts` abre sin sesión y `auth()->user()` sería `null`. Con sesión, el nav muestra "admin@restocode.com (Cerrar sesión)"; al hacer clic, el POST responde 302 a `/admin/login` con el aviso de salida; después, el panel ya no muestra el botón. Que `/admin/posts` no abra sin sesión se prueba en el paso 20.
 
 ## 20. Protección del admin
 
@@ -129,3 +123,25 @@ Checklist antes de comprimir:
 - `posts` no tiene `image` y ningún formulario sube archivos.
 - HTML semántico, estilos con Tailwind cargados por Vite (`public/build/` incluido en el zip), PHPDoc en controllers y métodos clave.
 - El zip se llama `apellido-nombre_apellido2-nombre2.zip` (o `apellido-nombre.zip` si es individual) y contiene el proyecto más `datos.txt`, sin `proyecto-docente`.
+
+## Extras para ver al final
+
+No los pide la consigna. Se evalúan cuando los pasos 1 a 21 estén hechos.
+
+### Enlace al login en el nav público
+
+Hoy no hay forma de llegar a `/admin/login` desde `/`: el nav del layout `main` solo tiene Inicio, Servicios y Blog, y hay que escribir la URL a mano.
+
+Archivos: `resources/views/components/layouts/main.blade.php`.
+
+Patrón: el nav del layout `main` del docente, con `@auth` / `@else` / `@endauth`. Sin sesión, un enlace "Iniciar sesión" a `route('auth.login.form')`. Con sesión, un enlace "Panel" a `route('admin.posts.index')`; el botón de cerrar sesión sigue en el layout `admin`, como dice [RULES.md](RULES.md). Mismas clases que los otros `<li>` del nav.
+
+```blade
+@auth
+    <li><a class="hover:text-blue-300" href="{{ route('admin.posts.index') }}">Panel</a></li>
+@else
+    <li><a class="hover:text-blue-300" href="{{ route('auth.login.form') }}">Iniciar sesión</a></li>
+@endauth
+```
+
+Probar: sin sesión, el nav de `/` muestra "Iniciar sesión" y lleva a `/admin/login`. Con sesión, muestra "Panel" y lleva a `/admin/posts`. Después del logout del paso 19 vuelve a mostrar "Iniciar sesión".

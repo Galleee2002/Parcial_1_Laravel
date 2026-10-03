@@ -47,4 +47,20 @@ class AuthController extends Controller
             ->route('admin.posts.index')
             ->with('feedback.message', 'Sesión iniciada con éxito. ¡Hola de nuevo!');
     }
+
+    /**
+     * Cierra la sesión, invalida los datos de sesión y el token CSRF,
+     * y vuelve al login con el aviso de salida.
+     */
+    public function processLogout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()
+            ->route('auth.login.form')
+            ->with('feedback.message', 'Sesión cerrada con éxito. ¡Te esperamos pronto!');
+    }
 }

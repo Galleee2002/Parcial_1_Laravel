@@ -19,6 +19,14 @@
                         ]) href="{{ route('admin.posts.index') }}" @if (request()->routeIs('admin.posts.*')) aria-current="page" @endif>Entradas</a>
                     </li>
                     <li><a class="hover:text-blue-300" href="{{ route('home') }}">Ver sitio</a></li>
+                    @auth
+                        <li>
+                            <form action="{{ route('auth.logout.process') }}" method="post">
+                                @csrf
+                                <button class="text-left hover:text-blue-300" type="submit">{{ auth()->user()->email }} (Cerrar sesión)</button>
+                            </form>
+                        </li>
+                    @endauth
                 </ul>
             </nav>
         </header>
