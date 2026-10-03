@@ -96,4 +96,27 @@ class AdminPostsController extends Controller
             ->route('admin.posts.index')
             ->with('feedback.message', 'La entrada ' . $post->title . ' se actualizó con éxito.');
     }
+
+    /**
+     * Muestra la confirmación antes de eliminar la entrada.
+     */
+    public function delete(int $id)
+    {
+        return view('admin.posts.delete', [
+            'post' => Post::findOrFail($id),
+        ]);
+    }
+
+    /**
+     * Elimina la entrada y vuelve al listado.
+     */
+    public function destroy(int $id)
+    {
+        $post = Post::findOrFail($id);
+        $post->delete();
+
+        return redirect()
+            ->route('admin.posts.index')
+            ->with('feedback.message', 'La entrada ' . $post->title . ' se eliminó con éxito.');
+    }
 }

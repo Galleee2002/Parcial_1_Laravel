@@ -26,7 +26,7 @@
                             <div class="flex items-center gap-3">
                                 <a class="underline" href="{{ route('blog.show', ['id' => $post->id]) }}">Ver</a>
                                 <a class="rounded bg-zinc-700 px-3 py-1 text-white hover:bg-zinc-600" href="{{ route('admin.posts.edit', ['id' => $post->id]) }}">Editar</a>
-                                <a class="rounded bg-red-600 px-3 py-1 text-white hover:bg-red-500" href="{{ url('/admin/posts/' . $post->id . '/eliminar') }}">Eliminar</a>
+                                <a class="rounded bg-red-600 px-3 py-1 text-white hover:bg-red-500" href="{{ route('admin.posts.delete', ['id' => $post->id]) }}">Eliminar</a>
                             </div>
                         </td>
                     </tr>

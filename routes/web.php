@@ -19,3 +19,5 @@ Route::get('/admin/posts/crear', [AdminPostsController::class, 'create'])->name(
 Route::post('/admin/posts/crear', [AdminPostsController::class, 'store'])->name('admin.posts.store');
 Route::get('/admin/posts/{id}/editar', [AdminPostsController::class, 'edit'])->name('admin.posts.edit')->whereNumber('id');
 Route::post('/admin/posts/{id}/editar', [AdminPostsController::class, 'update'])->name('admin.posts.update')->whereNumber('id');
+Route::get('/admin/posts/{id}/eliminar', [AdminPostsController::class, 'delete'])->name('admin.posts.delete')->whereNumber('id');
+Route::post('/admin/posts/{id}/eliminar', [AdminPostsController::class, 'destroy'])->name('admin.posts.destroy')->whereNumber('id');
