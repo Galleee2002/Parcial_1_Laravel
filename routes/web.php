@@ -17,3 +17,5 @@ Route::get('/blog/{id}', [PostsController::class, 'show'])->name('blog.show')->w
 Route::get('/admin/posts', [AdminPostsController::class, 'index'])->name('admin.posts.index');
 Route::get('/admin/posts/crear', [AdminPostsController::class, 'create'])->name('admin.posts.create');
 Route::post('/admin/posts/crear', [AdminPostsController::class, 'store'])->name('admin.posts.store');
+Route::get('/admin/posts/{id}/editar', [AdminPostsController::class, 'edit'])->name('admin.posts.edit')->whereNumber('id');
+Route::post('/admin/posts/{id}/editar', [AdminPostsController::class, 'update'])->name('admin.posts.update')->whereNumber('id');

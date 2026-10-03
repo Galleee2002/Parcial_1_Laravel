@@ -57,4 +57,43 @@ class AdminPostsController extends Controller
             ->route('admin.posts.index')
             ->with('feedback.message', 'La entrada ' . $post->title . ' se publicó con éxito.');
     }
+
+    /**
+     * Muestra el formulario de edición con los datos actuales de la entrada.
+     */
+    public function edit(int $id)
+    {
+        return view('admin.posts.edit', [
+            'post' => Post::findOrFail($id),
+        ]);
+    }
+
+    /**
+     * Valida los datos del formulario, actualiza la entrada y vuelve al listado.
+     */
+    public function update(int $id, Request $request)
+    {
+        $data = $request->validate([
+            'title' => 'required|min:2|max:100',
+            'summary' => 'required|max:255',
+            'content' => 'required',
+            'published_at' => 'required|date',
+        ], [
+            'title.required' => 'El título es obligatorio.',
+            'title.min' => 'El título tiene que tener al menos :min caracteres.',
+            'title.max' => 'El título no puede superar los :max caracteres.',
+            'summary.required' => 'El resumen es obligatorio.',
+            'summary.max' => 'El resumen no puede superar los :max caracteres.',
+            'content.required' => 'El contenido es obligatorio.',
+            'published_at.required' => 'La fecha de publicación es obligatoria.',
+            'published_at.date' => 'La fecha de publicación no es válida.',
+        ]);
+
+        $post = Post::findOrFail($id);
+        $post->update($data);
+
+        return redirect()
+            ->route('admin.posts.index')
+            ->with('feedback.message', 'La entrada ' . $post->title . ' se actualizó con éxito.');
+    }
 }

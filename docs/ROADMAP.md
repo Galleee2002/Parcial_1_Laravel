@@ -74,15 +74,9 @@ Tres entradas sobre digitalización gastronómica (menú QR, reservas online, we
 
 La consigna no pide imagen en las entradas, así que la columna y el campo del formulario se quitaron. Como el proyecto solo corre en local y todavía no se entregó, se borró la línea `$table->string('image')->nullable()` de `create_posts_table` en vez de sumar una migración con `Schema::table`, y se recreó la base con `php artisan migrate:fresh --seed`. También se quitó `image` del `$fillable` de `Post`, de las tres filas de `PostSeeder`, de las reglas y mensajes de `AdminPostsController@store` y del input de `admin/posts/create.blade.php`. `posts` queda con `id`, `title`, `summary`, `content`, `published_at` y fechas.
 
-## 15. Edición
+## 15. Edición — hecho
 
-Formulario y actualización en `/admin/posts/{id}/editar`.
-
-Archivos: `edit`, `update`, rutas GET y POST, `resources/views/admin/posts/edit.blade.php`.
-
-Patrón: `MoviesController@update` y `movies/edit.blade.php`, sin la parte de la portada (`hasFile`, `store`, `Storage::delete` y la imagen actual). `Post::findOrFail($id)`, `$data` desde `$request->validate()` con las mismas reglas y mensajes que `store`, `$post->update($data)` y redirección a `admin.posts.index` con feedback. Los values usan `old('campo', $post->campo)`.
-
-Probar: editar cambia la fila y muestra el feedback. Un dato inválido no pisa el registro.
+`/admin/posts/{id}/editar` con `AdminPostsController@edit` (`Post::findOrFail`, muestra el formulario) y `AdminPostsController@update` (valida y actualiza), ambos con PHPDoc, rutas GET y POST `admin.posts.edit` y `admin.posts.update` con `whereNumber('id')`, y vista `admin/posts/edit.blade.php` con `<x-layouts.admin>`. Sigue el patrón de `MoviesController@edit`/`update` y `movies/edit.blade.php`, sin la parte de la portada (`hasFile`, `store`, `Storage::delete` y la imagen actual). Como el docente, `update` repite las reglas de `store` y valida antes de buscar la entrada; después hace `$post->update($data)` y redirige a `admin.posts.index` con `feedback.message` armado con `$post->title`. El formulario es el de alta con `@csrf`, `action` a `route('admin.posts.update', ['id' => $post->id])` y cada value con `old('campo', $post->campo)`; `published_at` llega como string `Y-m-d`, que es lo que espera `type="date"`. El enlace "Editar" del listado pasa a `route('admin.posts.edit', ['id' => $post->id])`. Editar vuelve al listado con el mensaje de éxito; un título vacío vuelve al formulario con el error y lo escrito, sin tocar la fila; un id inexistente o no numérico responde 404.
 
 ## 16. Confirmación y baja
 
