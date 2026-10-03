@@ -60,15 +60,9 @@ Tres entradas sobre digitalización gastronómica (menú QR, reservas online, we
 
 `HomeController@index` suma `Post::orderBy('published_at', 'desc')->limit(3)->get()` y lo pasa a `home.blade.php` como `posts`, con el PHPDoc actualizado. Es la excepción a la regla de no ordenar ni limitar que está en [RULES.md](RULES.md): el parcial pide "las últimas 3 entradas" y con `Post::all()` + `@if` no se puede saber cuáles son las más recientes. Se ordena por `published_at` porque el seeder carga todas las entradas con el mismo `now()`. Debajo de los servicios, la home suma la sección "Novedades" (`h2`), con el mismo estilo que la grilla de servicios: un `<article>` por entrada con fecha en `<time datetime>`, título (`h3`), resumen y enlace a `route('blog.show', ['id' => $post->id])`, más el enlace "Ver todas las entradas" a `route('blog.index')`. Sin `@if` en la vista: el controller ya pasa solo tres entradas. Con el seeder se ven, en orden, las del 2026-09-20, 2026-09-02 y 2026-08-10.
 
-## 12. Layout admin y tabla de entradas
+## 12. Layout admin y tabla de entradas — hecho
 
-Armar el panel y el listado `/admin/posts`, todavía sin login.
-
-Archivos: `resources/views/components/layouts/admin.blade.php`, `AdminPostsController@index`, ruta `admin.posts.index`, `resources/views/admin/posts/index.blade.php`.
-
-Patrón: `components/layouts/admin.blade.php` del docente, pasado a `route()` como el layout `main`, con el mismo `@vite` y utilidades de Tailwind. La tabla y los botones salen de `movies/index.blade.php`. El aviso de éxito usa la misma clave `feedback.message` de [RULES.md](RULES.md).
-
-Probar: `/admin/posts` lista las entradas con enlaces a crear, editar y eliminar.
+`/admin/posts` con `AdminPostsController@index` (`Post::all()`, con PHPDoc), controller separado de `PostsController`, ruta `admin.posts.index` sin `->middleware('auth')` hasta el paso 19 y vista `admin/posts/index.blade.php`: tabla con título, fecha de publicación en `<time datetime>` y acciones Ver (`route('blog.show', ['id' => $post->id])`), Editar y Eliminar, más el botón "Publicar una nueva entrada". La tabla y los botones salen de `movies/index.blade.php`. El layout `components/layouts/admin.blade.php` sigue el del docente pasado a `route()` como el layout `main`, con el mismo `@vite`, nav lateral con `aria-current` y el aviso de `feedback.message` de [RULES.md](RULES.md). Los enlaces de crear, editar y eliminar usan `url()` hasta que existan `admin.posts.create`, `admin.posts.edit` y `admin.posts.delete` en los pasos 13 a 15, como pasó con el blog entre los pasos 9 y 10; mientras tanto responden 404. Con el seeder, la tabla lista las tres entradas.
 
 ## 13. Alta de una entrada
 

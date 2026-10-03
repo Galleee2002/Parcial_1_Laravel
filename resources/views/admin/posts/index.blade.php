@@ -4,7 +4,7 @@
     <section>
         <div class="flex items-center justify-between">
             <h1 class="text-3xl font-semibold">Entradas del blog</h1>
-            <a class="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500" href="{{ url('/admin/posts/crear') }}">Publicar una nueva entrada</a>
+            <a class="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500" href="{{ route('admin.posts.create') }}">Publicar una nueva entrada</a>
         </div>
 
         <table class="mt-8 w-full border-collapse overflow-hidden rounded border border-zinc-200 bg-white text-left text-sm">

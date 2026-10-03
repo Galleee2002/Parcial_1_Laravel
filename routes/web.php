@@ -15,3 +15,5 @@ Route::get('/blog', [PostsController::class, 'index'])->name('blog.index');
 Route::get('/blog/{id}', [PostsController::class, 'show'])->name('blog.show')->whereNumber('id');
 
 Route::get('/admin/posts', [AdminPostsController::class, 'index'])->name('admin.posts.index');
+Route::get('/admin/posts/crear', [AdminPostsController::class, 'create'])->name('admin.posts.create');
+Route::post('/admin/posts/crear', [AdminPostsController::class, 'store'])->name('admin.posts.store');
