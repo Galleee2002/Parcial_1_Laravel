@@ -145,3 +145,13 @@ Patrón: el nav del layout `main` del docente, con `@auth` / `@else` / `@endauth
 ```
 
 Probar: sin sesión, el nav de `/` muestra "Iniciar sesión" y lleva a `/admin/login`. Con sesión, muestra "Panel" y lleva a `/admin/posts`. Después del logout del paso 19 vuelve a mostrar "Iniciar sesión".
+
+### Footer del sitio público — hecho
+
+El footer del layout `main` era una sola línea de texto. Ahora cierra todas las páginas que usan `<x-layouts.main>` (home, servicios, blog y login) con el mismo estilo oscuro del header y del hero. El panel conserva su footer propio en el layout `admin`.
+
+Archivos: `resources/views/components/layouts/main.blade.php` y `resources/js/app.js`.
+
+Patrón: `<footer>` con `bg-zinc-900 text-white` y el contenedor `mx-auto max-w-6xl px-4` del header. Arriba, una banda (`<section>`) con `h2` "¿Listo para digitalizar tu local?" y el botón "Ver servicios" a `route('services.index')`, con las mismas clases que el botón del hero. Debajo, tres columnas: la marca con la tagline del hero; un `<nav aria-label="Pie de página">` con Inicio, Servicios y Blog (`route()` y `hover:text-blue-300`, como el nav del header); y un `<address>` con datos de contacto ficticios (email con `mailto:`, teléfono con `tel:` y ciudad) acompañados por los íconos `mail`, `phone` y `map-pin` de Lucide con `aria-hidden="true"`, registrados en `app.js` como pide [RULES.md](RULES.md). Cierra una barra con `© {{ date('Y') }} RestoCode`. Todo es estático: no se lee la base ni se toca ningún controller.
+
+Probar: `/`, `/servicios`, `/servicios/{id}`, `/blog`, `/blog/{id}` y `/admin/login` muestran el footer con los íconos, en columnas en desktop y apilado en mobile. `/admin/posts` sigue con el footer del panel.
