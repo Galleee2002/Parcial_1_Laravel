@@ -82,15 +82,9 @@ La consigna no pide imagen en las entradas, así que la columna y el campo del f
 
 `/admin/posts/{id}/eliminar` con `AdminPostsController@delete` (`Post::findOrFail`, muestra la confirmación) y `AdminPostsController@destroy` (borra), ambos con PHPDoc, rutas GET y POST `admin.posts.delete` y `admin.posts.destroy` con `whereNumber('id')`, y vista `admin/posts/delete.blade.php` con `<x-layouts.admin>`. Sigue el patrón de `MoviesController@delete`/`destroy` y `movies/delete.blade.php`, sin el borrado de la portada con `Storage` ni el TODO de relaciones. La vista muestra "Confirmación necesaria", el título (`h2`), resumen y fecha de publicación en un `<dl>` con `<time datetime>`, el contenido con `whitespace-pre-line` y el aviso de que la acción es irreversible; el `<form method="post">` lleva `@csrf`, el botón "Eliminar" y un enlace "Cancelar" a `admin.posts.index`, como el formulario de edición. `destroy` hace `$post = Post::findOrFail($id)`, `$post->delete()` y redirige a `admin.posts.index` con `feedback.message` armado con `$post->title`, que sigue en memoria después de borrar la fila, como `$movie->title` en el docente. El enlace "Eliminar" del listado pasa a `route('admin.posts.delete', ['id' => $post->id])`. El GET solo muestra la confirmación y la entrada sigue en la tabla; el POST la borra y vuelve al listado con el mensaje de éxito; un id inexistente o no numérico responde 404; `/blog` no tiene botón de borrado.
 
-## 17. Usuario admin
+## 17. Usuario admin — hecho
 
-Cargar un usuario para entrar al panel.
-
-Archivos: `database/seeders/UserSeeder.php`, `DatabaseSeeder.php`.
-
-Patrón: `UserSeeder` del docente. `DB::table('users')->insert()` con `id`, `name`, `email` y `password` con `Hash::make`. El docente no carga `created_at` ni `updated_at`; acá se suman con `now()`, como en `MovieSeeder`. La tabla `users` no se modifica. `UserSeeder` va primero en `$this->call([...])`.
-
-Probar: `php artisan migrate:fresh --seed` crea el usuario. Anotar email y contraseña de prueba en un comentario del seeder para poder explicarlos.
+`database/seeders/UserSeeder.php` carga el usuario del panel con `DB::table('users')->insert()`: `id` 1, `name` "Admin RestoCode", `email` `admin@restocode.com` y `password` con `Hash::make('restocode')`. Sigue el `UserSeeder` del docente; como él no carga `created_at` ni `updated_at`, acá se suman con `now()`, como en `MovieSeeder` y en los otros seeders, para que ninguna fecha quede en `null`. El email y la contraseña de prueba quedan en un comentario del seeder para poder explicarlos. `email_verified_at` y `remember_token` quedan en `null`. La tabla `users` y el modelo `User` no se modifican. `UserSeeder` va primero en el `$this->call([...])` de `DatabaseSeeder`, antes de `ServiceSeeder` y `PostSeeder`. `php artisan migrate:fresh --seed` deja un usuario, tres servicios y tres entradas, y `Hash::check('restocode', $user->password)` da `true`. Entrar con ese usuario se prueba en el paso 18.
 
 ## 18. Login
 
