@@ -21,7 +21,7 @@
                     name="title"
                     value="{{ old('title') }}"
                     @class([
-                        'mt-1 w-full rounded border bg-white px-3 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500',
+                        'mt-1 w-full rounded border bg-white px-3 py-2',
                         'border-zinc-300' => ! $errors->has('title'),
                         'border-red-500 text-red-700' => $errors->has('title'),
                     ])
@@ -40,7 +40,7 @@
                     name="summary"
                     value="{{ old('summary') }}"
                     @class([
-                        'mt-1 w-full rounded border bg-white px-3 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500',
+                        'mt-1 w-full rounded border bg-white px-3 py-2',
                         'border-zinc-300' => ! $errors->has('summary'),
                         'border-red-500 text-red-700' => $errors->has('summary'),
                     ])
@@ -58,7 +58,7 @@
                     name="content"
                     rows="8"
                     @class([
-                        'mt-1 w-full rounded border bg-white px-3 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500',
+                        'mt-1 w-full rounded border bg-white px-3 py-2',
                         'border-zinc-300' => ! $errors->has('content'),
                         'border-red-500 text-red-700' => $errors->has('content'),
                     ])
@@ -70,25 +70,6 @@
             </div>
 
             <div>
-                <label class="block text-sm font-medium" for="image">Imagen <span class="font-normal text-zinc-500">(opcional, ruta o URL)</span></label>
-                <input
-                    type="text"
-                    id="image"
-                    name="image"
-                    value="{{ old('image') }}"
-                    @class([
-                        'mt-1 w-full rounded border bg-white px-3 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500',
-                        'border-zinc-300' => ! $errors->has('image'),
-                        'border-red-500 text-red-700' => $errors->has('image'),
-                    ])
-                    @error('image') aria-invalid="true" aria-errormessage="error-image" @enderror
-                >
-                @error('image')
-                    <p class="mt-1 text-sm text-red-600" id="error-image">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <div>
                 <label class="block text-sm font-medium" for="published_at">Fecha de publicación</label>
                 <input
                     type="date"
@@ -96,7 +77,7 @@
                     name="published_at"
                     value="{{ old('published_at') }}"
                     @class([
-                        'mt-1 rounded border bg-white px-3 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500',
+                        'mt-1 rounded border bg-white px-3 py-2',
                         'border-zinc-300' => ! $errors->has('published_at'),
                         'border-red-500 text-red-700' => $errors->has('published_at'),
                     ])
@@ -108,7 +89,7 @@
             </div>
 
             <div class="flex items-center gap-4">
-                <button class="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500" type="submit">Publicar</button>
+                <button class="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500" type="submit">Publicar</button>
                 <a class="text-sm underline" href="{{ route('admin.posts.index') }}">Cancelar</a>
             </div>
         </form>

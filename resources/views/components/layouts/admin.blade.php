@@ -8,37 +8,31 @@
 </head>
 <body class="min-h-screen bg-zinc-50 text-zinc-900 antialiased">
     <div class="flex min-h-screen">
-        <header class="w-60 shrink-0 border-r border-zinc-800 bg-zinc-950 text-zinc-50">
+        <header class="w-60 shrink-0 bg-zinc-900 text-white">
             <nav class="flex flex-col gap-6 px-4 py-6">
-                <a class="group flex items-center gap-2 text-lg font-semibold tracking-tight focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-500" href="{{ route('admin.posts.index') }}">
-                    <span class="size-1.5 rounded-full bg-cyan-400" aria-hidden="true"></span>
-                    <span>Resto<span class="text-blue-500 transition-colors group-hover:text-blue-400">Code</span> · Admin</span>
-                </a>
-                <ul class="flex flex-col gap-3 text-sm font-medium">
+                <a class="text-lg font-semibold" href="{{ route('admin.posts.index') }}">RestoCode · Admin</a>
+                <ul class="flex flex-col gap-3 text-sm">
                     <li>
                         <a @class([
-                            'transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-500',
-                            'text-blue-500' => request()->routeIs('admin.posts.*'),
-                            'text-zinc-400 hover:text-blue-400' => ! request()->routeIs('admin.posts.*'),
+                            'hover:text-blue-300',
+                            'text-blue-300' => request()->routeIs('admin.posts.*'),
                         ]) href="{{ route('admin.posts.index') }}" @if (request()->routeIs('admin.posts.*')) aria-current="page" @endif>Entradas</a>
                     </li>
-                    <li>
-                        <a class="text-zinc-400 transition-colors hover:text-blue-400 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-500" href="{{ route('home') }}">Ver sitio</a>
-                    </li>
+                    <li><a class="hover:text-blue-300" href="{{ route('home') }}">Ver sitio</a></li>
                 </ul>
             </nav>
         </header>
 
         <div class="flex flex-1 flex-col">
-            @if (session()->has('feedback.message'))
-                <div class="px-8 pt-6">
-                    <div class="rounded border border-green-200 bg-green-50 px-4 py-3 text-green-800">
-                        {{ session('feedback.message') }}
-                    </div>
-                </div>
-            @endif
-
             <main class="flex-1 px-8 py-6">
+                @if (session()->has('feedback.message'))
+                    <div @class([
+                        'mb-6 rounded border px-4 py-3',
+                        'border-green-200 bg-green-50 text-green-800' => session('feedback.type', 'success') === 'success',
+                        'border-red-200 bg-red-50 text-red-800' => session('feedback.type', 'success') === 'danger',
+                    ])>{{ session('feedback.message') }}</div>
+                @endif
+
                 {{ $slot }}
             </main>
 

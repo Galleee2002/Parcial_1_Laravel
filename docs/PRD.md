@@ -4,7 +4,7 @@
 
 **RestoCode** es una plataforma web especializada en ofrecer soluciones digitales y desarrollo web exclusivamente para el sector gastronómico (restaurantes, bares, cafeterías y pizzerías). 
 
-A través del sitio público, los dueños de negocios gastronómicos pueden explorar los servicios ofrecidos (menús digitales QR, páginas web institucionales y sistemas de reservas), probar demos interactivas y consultar artículos educativos en el blog sobre marketing y digitalización gastronómica.
+A través del sitio público, los dueños de negocios gastronómicos pueden explorar los servicios ofrecidos (menús digitales QR, páginas web institucionales y sistemas de reservas) y consultar artículos educativos en el blog sobre marketing y digitalización gastronómica.
 
 El proyecto cuenta con un panel de administración restringido que permite gestionar el contenido dinámico del blog de noticias y novedades.
 
@@ -21,12 +21,12 @@ El proyecto cuenta con un panel de administración restringido que permite gesti
 
 ### A. Sitio Público (Usuarios)
 1. **Home (`/`):**
-   * **Hero Section:** Presentación del servicio enfocado en gastronomía con botones CTA ("Ver Servicios", "Ver Demo").
-   * **Sección de Servicios:** Grilla dinámica/estática con las soluciones disponibles.
+   * **Hero Section:** Presentación del servicio enfocado en gastronomía con un botón CTA ("Ver Servicios").
+   * **Sección de Servicios:** Grilla con los servicios activos, leídos de la base de datos.
    * **Novedades Recientes:** Muestra las últimas 3 entradas del blog traídas dinámicamente desde la base de datos.
 2. **Servicios (`/servicios` y `/servicios/{id}`):**
    * Presentación de paquetes (Menú QR Básico, Web Landing Gastronómica, Web Premium + Reservas).
-   * Vista de demostración/ejemplo de carta digital interactiva accediendo desde código QR.
+   * Vista de detalle de cada servicio.
 3. **Blog / Novedades (`/blog` y `/blog/{id}`):**
    * Listado de artículos sobre tendencias, consejos y estrategias para gastronómicos.
    * Vista detallada de cada artículo.
@@ -41,14 +41,14 @@ El proyecto cuenta con un panel de administración restringido que permite gesti
    * **Listar:** Tabla con las entradas creadas y opciones de gestión.
 
 ### C. Base de Datos
-* **Nombre de la Base de Datos:** `apellido_nombre` (o `apellido1_apellido2` si es en grupo).
+* **Nombre de la Base de Datos:** `apellido_nombre` (o `apellido1_apellido2` si es en grupo), sin prefijos ni sufijos.
 * **Tablas Requeridas:**
   1. `users`: (la tabla que trae Laravel, sin modificar)
      * Campos: `id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`.
   2. `services`: (Tabla de servicios con más de 5 campos específicos)
      * Campos: `id`, `title`, `short_description`, `full_description`, `price`, `delivery_days`, `is_active`, `created_at`, `updated_at`.
   3. `posts`: (Tabla para el blog)
-     * Campos: `id`, `title`, `summary`, `content`, `image`, `published_at`, `created_at`, `updated_at`.
+     * Campos: `id`, `title`, `summary`, `content`, `published_at`, `created_at`, `updated_at`.
 
 ---
 
@@ -57,14 +57,14 @@ El proyecto cuenta con un panel de administración restringido que permite gesti
 * **PHP & Laravel:**
   * Uso estricto de **Blade** para renderizar vistas.
   * Implementación de **Migrations** y **Seeders** para inicializar la base de datos con datos de prueba (`php artisan migrate --seed`).
-  * Validaciones procesadas del lado del servidor en PHP (`$request->validate()` o *Form Requests*) enviando mensajes de error claros a la vista. **Se evita la validación HTML**.
+  * Validaciones procesadas del lado del servidor en PHP con `$request->validate()` en el controller, enviando mensajes de error claros a la vista. **No se usa la validación HTML** (la consigna la prohíbe).
   * Notificaciones de feedback al usuario (*Flash Messages* en sesión) tras operaciones exitosas (ej. "Entrada creada con éxito").
 * **Estructura y Código:**
   * Uso de componentes MVC (Models, Controllers, Middlewares).
   * Principio de Responsabilidad Única (SRP).
   * Nombres limpios e intencionales en español o inglés para variables, métodos y clases.
   * Etiquetas semánticas en HTML (`<header>`, `<nav>`, `<main>`, `<section>`, `<article>`, `<footer>`).
-  * Estilización con Tailwind CSS, compilado por Vite y cargado con `@vite` en los layouts.
+  * Estilización con Tailwind CSS, compilado por Vite y cargado con `@vite` en los layouts. La consigna permite Bootstrap o Tailwind; se eligió Tailwind.
   * Documentación con PHPDoc en controladores y métodos clave.
 
 ---
@@ -82,7 +82,7 @@ El proyecto cuenta con un panel de administración restringido que permite gesti
     Año: [Año Actual]
     Turno: [Turno]
     Comisión: [Comisión]
-    Apellido y Nombre: [Tus Datos]
+    Apellido y Nombre: [Datos de todos los integrantes]
     Docente: Santiago Gallino
     Carácter de entrega: 1er Parcial
     ```

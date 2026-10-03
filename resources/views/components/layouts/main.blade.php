@@ -6,57 +6,32 @@
     <title>{{ $title }} · RestoCode</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen bg-white text-zinc-900 antialiased">
-    <header>
-        <nav class="border-b border-zinc-800 bg-zinc-950 text-zinc-50">
-            <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-                <a class="group flex items-center gap-2 text-lg font-semibold tracking-tight focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-500" href="{{ route('home') }}">
-                    <span class="size-1.5 rounded-full bg-cyan-400" aria-hidden="true"></span>
-                    <span>Resto<span class="text-blue-500 transition-colors group-hover:text-blue-400">Code</span></span>
-                </a>
-                <ul class="flex gap-6 text-sm font-medium">
-                    <li>
-                        <a @class([
-                            'transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-500',
-                            'text-blue-500' => request()->routeIs('home'),
-                            'text-zinc-400 hover:text-blue-400' => ! request()->routeIs('home'),
-                        ]) href="{{ route('home') }}" @if (request()->routeIs('home')) aria-current="page" @endif>Inicio</a>
-                    </li>
-                    <li>
-                        <a @class([
-                            'transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-500',
-                            'text-blue-500' => request()->routeIs('services.*'),
-                            'text-zinc-400 hover:text-blue-400' => ! request()->routeIs('services.*'),
-                        ]) href="{{ route('services.index') }}" @if (request()->routeIs('services.*')) aria-current="page" @endif>Servicios</a>
-                    </li>
-                    <li>
-                        <a @class([
-                            'transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-500',
-                            'text-blue-500' => request()->routeIs('blog.*'),
-                            'text-zinc-400 hover:text-blue-400' => ! request()->routeIs('blog.*'),
-                        ]) href="{{ route('blog.index') }}" @if (request()->routeIs('blog.*')) aria-current="page" @endif>Blog</a>
-                    </li>
-                </ul>
-            </div>
+<body class="flex min-h-screen flex-col bg-white text-zinc-900 antialiased">
+    <header class="bg-zinc-900 text-white">
+        <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+            <a class="text-lg font-semibold" href="{{ route('home') }}">RestoCode</a>
+            <ul class="flex gap-6 text-sm">
+                <li><a class="hover:text-blue-300" href="{{ route('home') }}">Inicio</a></li>
+                <li><a class="hover:text-blue-300" href="{{ route('services.index') }}">Servicios</a></li>
+                <li><a class="hover:text-blue-300" href="{{ route('blog.index') }}">Blog</a></li>
+            </ul>
         </nav>
     </header>
 
-    @if (session()->has('feedback.message'))
-        <div class="mx-auto mt-3 max-w-6xl px-4">
-            <div class="rounded border border-green-200 bg-green-50 px-4 py-3 text-green-800">
-                {{ session('feedback.message') }}
-            </div>
-        </div>
-    @endif
+    <main class="mx-auto w-full max-w-6xl flex-1 px-4 py-8">
+        @if (session()->has('feedback.message'))
+            <div @class([
+                'mb-6 rounded border px-4 py-3',
+                'border-green-200 bg-green-50 text-green-800' => session('feedback.type', 'success') === 'success',
+                'border-red-200 bg-red-50 text-red-800' => session('feedback.type', 'success') === 'danger',
+            ])>{{ session('feedback.message') }}</div>
+        @endif
 
-    <main>
         {{ $slot }}
     </main>
 
-    <footer class="mt-12 border-t border-zinc-200 py-4">
-        <div class="mx-auto max-w-6xl px-4">
-            <p>RestoCode · soluciones digitales para gastronomía</p>
-        </div>
+    <footer class="border-t border-zinc-200 py-4">
+        <p class="mx-auto max-w-6xl px-4 text-sm text-zinc-500">RestoCode · soluciones digitales para gastronomía</p>
     </footer>
 </body>
 </html>

@@ -4,7 +4,7 @@ Estas reglas pueden cambiar cuando el docente suba clases nuevas. Si una clase c
 
 Acá está cómo se escribe el código. El orden de las features está en [ROADMAP.md](ROADMAP.md).
 
-La fuente de verdad es `proyecto-docente`. No se agrega una técnica que esa carpeta no muestre y que el parcial no pida. Cuando el docente deja una alternativa comentada y otra activa, se copia la activa. El dominio (qué páginas y qué tablas) sale de [PRD.md](PRD.md) y de la consigna del parcial.
+La fuente de verdad es `proyecto-docente`. No se agrega una técnica que esa carpeta no muestre y que el parcial no pida. Cuando el docente deja una alternativa comentada y otra activa, se copia la activa. El dominio (qué páginas y qué tablas) sale de [PRD.md](PRD.md) y de la consigna del parcial ([Portales y Comercio Electrónico - Primer Parcial.pdf](Portales%20y%20Comercio%20Electrónico%20-%20Primer%20Parcial.pdf)). Una feature que la consigna no pide no se agrega aunque el docente la muestre, como la subida de archivos.
 
 Cuando el parcial obliga a apartarse del docente, la regla lo dice y explica por qué. Esas excepciones son pocas y se tienen que poder justificar en el coloquio.
 
@@ -15,8 +15,8 @@ Cuando el parcial obliga a apartarse del docente, la regla lo dice y explica por
 - Verbos PUT y DELETE. El formulario se muestra con GET y se procesa con POST.
 - Validación del navegador. No se usan atributos como `required`, `min` o `max`. Los inputs pueden usar `type` (`text`, `email`, `date`, `password`); como `type="email"` activa la validación del navegador, el formulario que lo tenga lleva `novalidate`.
 - Filtrar, ordenar o limitar consultas, ni con el Query Builder (`Model::where()`, `orderBy()`, `limit()`) ni con métodos de la `Collection` (`where`, `sortByDesc`, `take`). El docente no lo muestra. Ver "Vistas" para cómo se muestra solo una parte de un listado. Única excepción: la home, porque el parcial pide "las últimas 3 entradas del blog" y con `Post::all()` + `@if` no se puede saber cuáles son las más recientes. `HomeController` usa `Post::orderBy('published_at', 'desc')->limit(3)->get()`; el resto del sitio sigue con `all()`.
-- Bootstrap y hojas en `public/css`. El docente todavía las usa, pero el parcial pide Tailwind cargado por Vite.
-- Subida de archivos. En el docente la portada está marcada como "coming soon" y el `AuthController` la deja como TODO. `posts.image` es un string nullable.
+- Bootstrap y hojas en `public/css`. El docente las carga en sus layouts (su proyecto trae Tailwind y Vite instalados, pero no los usa). La consigna permite Bootstrap o Tailwind; RestoCode usa Tailwind cargado por Vite.
+- Subida de archivos. El docente ya la muestra (`MoviesController` con `hasFile()`, `store()` y `Storage::delete()`, columnas `cover` y `cover_description`), pero la consigna no la pide. Las entradas no llevan imagen.
 
 ## Rutas
 
@@ -27,6 +27,7 @@ Referencia: `proyecto-docente/routes/web.php`.
 - Las rutas con un segmento fijo (`crear`, `listado`) se declaran de forma que `{id}` no las capture. Con `whereNumber('id')` alcanza.
 - Enlaces con `route('nombre', ['id' => $modelo->id])`, no con URLs armadas a mano.
 - Cada ruta del ABM lleva `->middleware('auth')`, una por una, como las de `movies` en el docente. Las rutas públicas y las del login no lo llevan.
+- El docente pone el login en `/iniciar-sesion` y el logout en `/cerrar-session`. En RestoCode van en `/admin/login` y `/admin/logout` para que todo el panel quede bajo `/admin`; los nombres de ruta son los mismos que los del docente.
 - Nombres: `home`, `services.index`, `services.show`, `blog.index`, `blog.show`, `admin.posts.index`, `admin.posts.create`, `admin.posts.store`, `admin.posts.edit`, `admin.posts.update`, `admin.posts.delete`, `admin.posts.destroy`, `auth.login.form`, `auth.login.process`, `auth.logout.process`.
 
 ## Controllers
@@ -37,7 +38,7 @@ Referencia: `proyecto-docente/app/Http/Controllers/MoviesController.php`, `HomeC
 - Un controller por responsabilidad. La home no lista el ABM. El ABM de entradas no renderiza el sitio público. El login vive en `AuthController`.
 - Lectura: `Model::all()`, `find` o `findOrFail` (salvo las novedades de la home, ver "Qué no se usa"). Pasar datos con el segundo argumento de `view('carpeta.vista', ['clave' => $valor])`.
 - Escritura: `Model::create($data)`, `$modelo->update($data)`, `$modelo->delete()`.
-- `$data` es lo que devuelve `$request->validate()`, como `$credenciales` en `AuthController`. No se usa `$_POST` ni `$request->input()` para guardar.
+- `$data` es lo que devuelve `$request->validate()`, como `$credentials` en `AuthController`. No se usa `$_POST` ni `$request->input()` para guardar. El docente guarda con `$request->input()` en `MoviesController`, pero en `AuthController` ya usa el retorno de `validate()`; así solo se guardan campos validados.
 - Después de crear, editar o borrar: `redirect()->route('...')->with('feedback.message', '...')`.
 - PHPDoc en la clase y en los métodos públicos. El docente no los escribe porque comenta para la cursada; el parcial los evalúa.
 
@@ -54,23 +55,24 @@ Referencia: `proyecto-docente/app/Models/Movie.php`.
 
 ## Migraciones y seeders
 
-Referencia: `proyecto-docente/database/migrations/2026_08_25_231756_create_movies_table.php`, `MovieSeeder.php`, `UserSeeder.php` y `DatabaseSeeder.php`.
+Referencia: `proyecto-docente/database/migrations/2026_08_25_231756_create_movies_table.php`, `2026_09_29_223250_add_cover_columns_to_movies_table.php`, `MovieSeeder.php`, `UserSeeder.php` y `DatabaseSeeder.php`.
 
 - Migración anónima con `Schema::create` y `down()` que hace `Schema::dropIfExists`.
+- Para cambiar una tabla que ya existe en una base con datos que hay que conservar, no se edita su migración: se crea una nueva con `Schema::table`, como `add_cover_columns_to_movies_table`. El `down()` deshace el cambio (si el `up()` agrega columnas, el `down()` las quita con `dropColumn`, y al revés). Mientras RestoCode solo corra en local y no se haya entregado, se puede editar la migración original y recrear todo con `php artisan migrate:fresh --seed`, como se hizo al quitar `posts.image`.
 - Toda tabla de negocio cierra con `$table->timestamps()`.
 - La tabla `users` se deja como viene (`0001_01_01_000000_create_users_table.php`). La consigna permite usarla. Tiene `id`, `name`, `email`, `password`, `remember_token` y fechas; `name` es obligatorio, así que el seeder lo completa.
-- Los seeders insertan con `DB::table('...')->insert([...])` y completan `created_at` y `updated_at` con `now()`.
+- Los seeders insertan con `DB::table('...')->insert([...])` y completan `created_at` y `updated_at` con `now()`, como `MovieSeeder`. El `UserSeeder` del docente no las completa; en RestoCode se completan en todos para que ninguna fecha quede en `null`.
 - Las contraseñas se guardan con `Hash::make`, como en `UserSeeder`.
 - `DatabaseSeeder` los llama con `$this->call([...])`, con `UserSeeder` primero.
 - La carga inicial tiene que poder repetirse con `php artisan migrate:fresh --seed`.
 
 ## Base de datos
 
-- Motor MySQL. En el `.env` del docente el default es SQLite; el parcial pide una base con nombre.
-- `DB_DATABASE` se llama `apellido_nombre` (o `apellido1_apellido2` si el trabajo es en grupo).
+- Motor MySQL. El docente usa MariaDB (`DB_CONNECTION=mariadb` y `DB_ENGINE=InnoDB` en su `.env`); su `.env.example` sigue con SQLite. Los dos motores funcionan igual con estas migraciones.
+- `DB_DATABASE` se llama `apellido_nombre` (o `apellido1_apellido2` si el trabajo es en grupo), sin prefijos. Un nombre como `dw3_apellido1_apellido2` no cumple la consigna y puede restar un punto.
 - `users`: la tabla de Laravel (`id`, `name`, `email`, `password`, ...).
-- `services`: `id`, `title`, `short_description`, `full_description`, `price`, `delivery_days`, `is_active`, `created_at`, `updated_at`.
-- `posts`: `id`, `title`, `summary`, `content`, `image`, `published_at`, `created_at`, `updated_at`.
+- `services`: `id`, `title`, `short_description`, `full_description`, `price`, `delivery_days`, `is_active`, `created_at`, `updated_at`. Es la tabla que cumple los cinco campos que pide la consigna.
+- `posts`: `id`, `title`, `summary`, `content`, `published_at`, `created_at`, `updated_at`.
 
 ## Vistas
 
@@ -116,7 +118,7 @@ Referencia: `proyecto-docente/app/Http/Controllers/AuthController.php`, `databas
 
 - `UserSeeder` crea el usuario admin con `DB::table('users')->insert()` y `Hash::make`.
 - `AuthController` tiene tres métodos: `showForm` (muestra el login), `processForm` (valida y entra) y `processLogout` (sale).
-- `processForm` valida `email` y `password` y llama a `Auth::attempt(['email' => ..., 'password' => ...])`. Si falla, vuelve al login con el feedback de error. Si entra, redirige a `admin.posts.index` con el feedback de bienvenida.
+- `processForm` guarda en `$credentials` lo que devuelve `$request->validate()` (`email` y `password`) y llama a `Auth::attempt($credentials)`, que es la versión activa del docente (las variantes con el array armado a mano quedan comentadas). Si falla, vuelve al login con el feedback de error. Si entra, redirige a `admin.posts.index` con el feedback de bienvenida.
 - Al entrar se llama a `$request->session()->regenerate()`. Es una excepción al docente, que no lo hace: la documentación de Laravel lo pide para evitar la fijación de sesión, igual que el docente sigue esa documentación en el logout.
 - `processLogout` hace `Auth::logout()`, `$request->session()->invalidate()` y `$request->session()->regenerateToken()`, y vuelve al login con feedback.
 - Las rutas del ABM se protegen con el middleware `auth` de Laravel. No se escribe un middleware propio porque el docente usa el de Laravel.

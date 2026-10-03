@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('title', 100);
             $table->string('summary');
             $table->text('content');
-            $table->string('image')->nullable();
             $table->date('published_at');
             $table->timestamps();
         });

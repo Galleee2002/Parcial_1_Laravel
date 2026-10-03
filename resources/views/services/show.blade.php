@@ -1,7 +1,7 @@
 <x-layouts.main>
     <x-slot:title>{{ $service->title }}</x-slot:title>
 
-    <article class="mx-auto max-w-3xl px-4 py-12">
+    <article class="max-w-3xl">
         <a class="text-sm underline" href="{{ route('services.index') }}">Volver a servicios</a>
 
         <h1 class="mt-4 text-3xl font-semibold">{{ $service->title }}</h1>

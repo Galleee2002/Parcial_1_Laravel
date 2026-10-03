@@ -39,7 +39,6 @@ class AdminPostsController extends Controller
             'title' => 'required|min:2|max:100',
             'summary' => 'required|max:255',
             'content' => 'required',
-            'image' => 'nullable|max:255',
             'published_at' => 'required|date',
         ], [
             'title.required' => 'El título es obligatorio.',
@@ -48,15 +47,14 @@ class AdminPostsController extends Controller
             'summary.required' => 'El resumen es obligatorio.',
             'summary.max' => 'El resumen no puede superar los :max caracteres.',
             'content.required' => 'El contenido es obligatorio.',
-            'image.max' => 'La imagen no puede superar los :max caracteres.',
             'published_at.required' => 'La fecha de publicación es obligatoria.',
             'published_at.date' => 'La fecha de publicación no es válida.',
         ]);
 
-        Post::create($data);
+        $post = Post::create($data);
 
         return redirect()
             ->route('admin.posts.index')
-            ->with('feedback.message', 'La entrada "' . $data['title'] . '" se publicó con éxito.');
+            ->with('feedback.message', 'La entrada ' . $post->title . ' se publicó con éxito.');
     }
 }
