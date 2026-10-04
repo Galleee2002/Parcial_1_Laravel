@@ -23,10 +23,16 @@
                             <time datetime="{{ $post->published_at }}">{{ $post->published_at }}</time>
                         </td>
                         <td class="px-4 py-3">
-                            <div class="flex items-center gap-3">
-                                <a class="underline" href="{{ route('blog.show', ['id' => $post->id]) }}">Ver</a>
-                                <a class="rounded bg-zinc-700 px-3 py-1 text-white hover:bg-zinc-600" href="{{ route('admin.posts.edit', ['id' => $post->id]) }}">Editar</a>
-                                <a class="rounded bg-red-600 px-3 py-1 text-white hover:bg-red-500" href="{{ route('admin.posts.delete', ['id' => $post->id]) }}">Eliminar</a>
+                            <div class="flex items-center gap-2">
+                                <a class="inline-flex size-8 items-center justify-center rounded-full text-green-600 transition-colors hover:bg-green-100 hover:text-green-800" href="{{ route('blog.show', ['id' => $post->id]) }}" aria-label="Ver {{ $post->title }}">
+                                    <i data-lucide="eye" class="size-4" aria-hidden="true"></i>
+                                </a>
+                                <a class="inline-flex size-8 items-center justify-center rounded-full text-blue-600 transition-colors hover:bg-blue-100 hover:text-blue-800" href="{{ route('admin.posts.edit', ['id' => $post->id]) }}" aria-label="Editar {{ $post->title }}">
+                                    <i data-lucide="pencil" class="size-4" aria-hidden="true"></i>
+                                </a>
+                                <a class="inline-flex size-8 items-center justify-center rounded-full text-red-600 transition-colors hover:bg-red-100 hover:text-red-800" href="{{ route('admin.posts.delete', ['id' => $post->id]) }}" aria-label="Eliminar {{ $post->title }}">
+                                    <i data-lucide="trash-2" class="size-4" aria-hidden="true"></i>
+                                </a>
                             </div>
                         </td>
                     </tr>

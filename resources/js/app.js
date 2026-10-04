@@ -1,6 +1,6 @@
-import { createIcons, ArrowUpRight, ChevronLeft, Globe, LogOut, Mail, MapPin, Newspaper, Phone, User, UtensilsCrossed } from 'lucide';
+import { createIcons, ArrowUpRight, ChevronLeft, Eye, Globe, LogOut, Mail, MapPin, Newspaper, Pencil, Phone, Trash2, User, UtensilsCrossed } from 'lucide';
 
-createIcons({ icons: { ArrowUpRight, ChevronLeft, Globe, LogOut, Mail, MapPin, Newspaper, Phone, User, UtensilsCrossed } });
+createIcons({ icons: { ArrowUpRight, ChevronLeft, Eye, Globe, LogOut, Mail, MapPin, Newspaper, Pencil, Phone, Trash2, User, UtensilsCrossed } });
 
 const sidebar = document.querySelector('[data-sidebar]');
 const sidebarToggle = document.querySelector('[data-sidebar-toggle]');
