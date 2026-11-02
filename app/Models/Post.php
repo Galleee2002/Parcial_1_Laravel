@@ -10,6 +10,7 @@ class Post extends Model
         'title',
         'summary',
         'content',
+        'image',
         'published_at',
     ];
 }

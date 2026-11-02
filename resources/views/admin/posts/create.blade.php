@@ -10,7 +10,7 @@
             </div>
         @endif
 
-        <form class="mt-6 flex flex-col gap-5" action="{{ route('admin.posts.store') }}" method="post">
+        <form class="mt-6 flex flex-col gap-5" action="{{ route('admin.posts.store') }}" method="post" enctype="multipart/form-data">
             @csrf
 
             <div>
@@ -66,6 +66,24 @@
                 >{{ old('content') }}</textarea>
                 @error('content')
                     <p class="mt-1 text-sm text-red-600" id="error-content">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium" for="image">Imagen</label>
+                <input
+                    type="file"
+                    id="image"
+                    name="image"
+                    @class([
+                        'mt-1 w-full rounded border bg-white px-3 py-2',
+                        'border-zinc-300' => ! $errors->has('image'),
+                        'border-red-500 text-red-700' => $errors->has('image'),
+                    ])
+                    @error('image') aria-invalid="true" aria-errormessage="error-image" @enderror
+                >
+                @error('image')
+                    <p class="mt-1 text-sm text-red-600" id="error-image">{{ $message }}</p>
                 @enderror
             </div>
 

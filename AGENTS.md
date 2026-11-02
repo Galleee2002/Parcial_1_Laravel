@@ -41,7 +41,7 @@ Rutas en [`routes/web.php`](routes/web.php):
 
 Controllers: `HomeController`, `ServicesController`, `PostsController`, `AdminPostsController`, `AuthController` (`Auth::attempt`, `session()->regenerate()` al entrar).
 
-Tablas: `users` (Laravel, sin tocar), `services` (6 campos de negocio; precio en centavos + accessor), `posts` (`title`, `summary`, `content`, `published_at`; **sin `image`**).
+Tablas: `users` (Laravel, sin tocar), `services` (6 campos de negocio; precio en centavos + accessor), `posts` (`title`, `summary`, `content`, `image` nullable, `published_at`).
 
 Seeders: `UserSeeder` (`admin@restocode.com` / `restocode`), 5 servicios (el último inactivo), 3 posts. `php artisan migrate:fresh --seed`.
 
@@ -55,10 +55,11 @@ No hay `datos.txt`.
 
 Ya copiado a RestoCode (paso 20): `redirectGuestsTo` + `middleware('auth')` en el ABM.
 
+Ya copiado (paso 23): upload de `cover` pasado a `posts.image` (`hasFile` → `store('posts', 'public')` + `Storage::disk('public')->delete`).
+
 Sigue en el docente y **no se implementa** salvo que se pida:
 
 - Middleware propio `EnsureIsOver18YearsOld` + alias `over18`.
-- Upload: `hasFile('cover')` → `store('covers', 'public')` + `Storage::delete`.
 - Relaciones 1:n (`belongsTo` rating) y n:n (`belongsToMany` géneros, pivot, `attach`/`sync`/`detach`).
 - `with`, `orderBy`, `paginate`.
 
@@ -86,7 +87,7 @@ Nombres de ruta, `$fillable`, `route()`, PHPDoc, `feedback.message` / `feedback.
 
 ## Segundo parcial
 
-**Todavía no se implementa** salvo que el usuario lo pida en el turno.
+El paso 23 (imágenes en entradas) ya está. El resto (24–28) no se implementa salvo que el usuario lo pida en el turno.
 
 Pasos tentativos en ROADMAP 22–28. Detalle y tabla consigna vs docente: `docs/SEGUNDO_PARCIAL.md`.
 

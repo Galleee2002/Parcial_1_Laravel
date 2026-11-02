@@ -42,7 +42,7 @@ El proyecto cuenta con un panel de administración restringido que permite gesti
    * **Editar:** Formulario para modificar publicaciones existentes.
    * **Eliminar:** Mecanismo seguro para remover artículos.
    * **Listar:** Tabla con las entradas creadas y opciones de gestión.
-   * El 2do pide alta y modificación de **imágenes** en estas entradas. En el 1er se sacó `image`; el docente ya muestra el patrón con `cover`.
+   * Alta y modificación de **imágenes** en estas entradas (`posts.image`, patrón de `cover` del docente).
 3. **Usuarios (2do parcial, espera clase):**
    * Listado de usuarios y detalle de cada uno, incluyendo el servicio contratado o las compras, si las tiene. Esos datos se cargan por seeders. No hace falta un proceso de compra.
 
@@ -54,8 +54,8 @@ El proyecto cuenta con un panel de administración restringido que permite gesti
   2. `services`: (Tabla de servicios con más de 5 campos específicos)
      * Campos: `id`, `title`, `short_description`, `full_description`, `price`, `delivery_days`, `is_active`, `created_at`, `updated_at`.
   3. `posts`: (Tabla para el blog)
-     * Campos hoy: `id`, `title`, `summary`, `content`, `published_at`, `created_at`, `updated_at`.
-     * El 2do pide imagen (alta/modificación). No se reintroduce la columna hasta implementar el paso correspondiente, copiando el patrón de `cover` del docente.
+     * Campos: `id`, `title`, `summary`, `content`, `image` (string nullable; path en el disk `public`), `published_at`, `created_at`, `updated_at`.
+     * Alta y modificación de imagen en el ABM, copiando el patrón de `cover` del docente. Las cards de “Novedades” de la home siguen usando `public/img`; eso no es el campo de `posts`.
 * **Relaciones (2do parcial):** debe haber relaciones entre tablas y modelos relacionados. Al menos un usuario con un servicio contratado, cargado por seeders. El docente muestra 1:n y n:n en películas (`rating`, `genres`); **no** muestra usuario–servicio. No se diseña esa tabla en este PRD.
 * **Roles (2do parcial):** al menos usuario común y administrador. El docente todavía no los muestra.
 

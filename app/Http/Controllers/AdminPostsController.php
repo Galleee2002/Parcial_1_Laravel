@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * ABM de entradas del blog en el panel de administración.
@@ -51,6 +52,10 @@ class AdminPostsController extends Controller
             'published_at.date' => 'La fecha de publicación no es válida.',
         ]);
 
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('posts', 'public');
+        }
+
         $post = Post::create($data);
 
         return redirect()
@@ -90,7 +95,21 @@ class AdminPostsController extends Controller
         ]);
 
         $post = Post::findOrFail($id);
+        $oldImage = $post->image;
+
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('posts', 'public');
+        }
+
         $post->update($data);
+
+        if (
+            $request->hasFile('image') &&
+            $oldImage != null &&
+            Storage::disk('public')->exists($oldImage)
+        ) {
+            Storage::disk('public')->delete($oldImage);
+        }
 
         return redirect()
             ->route('admin.posts.index')
@@ -114,6 +133,13 @@ class AdminPostsController extends Controller
     {
         $post = Post::findOrFail($id);
         $post->delete();
+
+        if (
+            $post->image != null &&
+            Storage::disk('public')->exists($post->image)
+        ) {
+            Storage::disk('public')->delete($post->image);
+        }
 
         return redirect()
             ->route('admin.posts.index')

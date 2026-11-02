@@ -75,7 +75,7 @@ Fuente: PDF del segundo parcial. Lo que se mantiene del 1er (sitio + admin, Blad
 | Admin autenticado como **administrador** | `auth` de Laravel sí. Rol admin **no**. | No adelantar un campo `role` inventado. |
 | Middleware **personalizado** que verifique al administrador | Patrón de middleware propio sí (`EnsureIsOver18YearsOld`). Contenido de rol **no**. | Copiar estructura `handle` + `alias` cuando se implemente el rol. No copiar +18. |
 | ABM del blog | Sí (ABM de `movies`). | Ya está en `admin/posts`. |
-| Alta/modificación de **imágenes** en el blog | Sí (`cover`). | Copiar patrón a `posts` cuando se implemente. El 1er sacó `image`. |
+| Alta/modificación de **imágenes** en el blog | Sí (`cover`). | Hecho en el paso 23: `posts.image`, `store('posts', 'public')`. |
 | Relaciones entre tablas y modelos relacionados | Sí (1:n rating, n:n géneros). | Copiar `belongsTo` / `belongsToMany`, FKs en migraciones nuevas, seeders. **No** copiar `ratings`/`genres` ni diseñar acá la contratación. |
 | Listado de usuarios + detalle con servicio contratado o compras (seeders, sin proceso de compra) | **No.** Reserva por mail no es eso. | Espera clase. |
 | Al menos un usuario con servicio contratado (seeders) | **No.** | Espera clase. |
@@ -96,10 +96,10 @@ Obligatorias, iguales al 1er más las nuevas:
 - Tailwind + Lucide, no Bootstrap.
 - Layout admin con `route()` y `{{ }}`.
 - No copiar verificación de edad, mails de reserva, comentarios de cursada, ni las vistas `movies/*`.
-- Upload: cuando se haga, el campo vive en `posts` (nombre a decidir al implementar, copiando la *técnica* de `cover`, no el nombre si no encaja). Disk `public`. No incluir el link `public/storage` en el zip.
+- Upload: campo `image` en `posts` (técnica de `cover`, no el nombre). Disk `public`. `exists` / `delete` con `Storage::disk('public')`. En el `src` de las vistas, `asset('storage/' . $post->image)`. No incluir el link `public/storage` en el zip.
 
 ## 6. Estado de RestoCode hoy
 
-El código de la raíz es el primer parcial más el paso 20: el ABM de entradas exige sesión (`auth` + `redirectGuestsTo`). `posts` no tiene imagen. No hay registro, roles, middleware de administrador, relaciones Eloquent propias ni listado de usuarios.
+El código de la raíz es el primer parcial más el paso 20 (`auth` + `redirectGuestsTo`) y el paso 23 (imagen en `posts`). No hay registro, roles, middleware de administrador, relaciones Eloquent propias ni listado de usuarios.
 
 Este archivo no autoriza a implementar el 2do. Cuando se pida, se sigue el ROADMAP y se copia de `proyecto-docente` la técnica activa de esa feature.

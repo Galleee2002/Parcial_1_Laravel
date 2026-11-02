@@ -77,7 +77,7 @@ Referencia: `proyecto-docente/database/migrations/2026_08_25_231756_create_movie
 - `DB_DATABASE` se llama `apellido_nombre` (o `apellido1_apellido2` si el trabajo es en grupo), sin prefijos. Un nombre como `dw3_apellido1_apellido2` no cumple la consigna y puede restar un punto.
 - `users`: la tabla de Laravel (`id`, `name`, `email`, `password`, ...).
 - `services`: `id`, `title`, `short_description`, `full_description`, `price`, `delivery_days`, `is_active`, `created_at`, `updated_at`. Es la tabla que cumple los cinco campos que pide la consigna.
-- `posts`: hoy `id`, `title`, `summary`, `content`, `published_at`, `created_at`, `updated_at`. El 2do pide alta/modificación de imágenes: cuando se implemente, se suma una columna de archivo copiando el patrón de `cover` (string nullable + `hasFile` / `store` / `Storage::delete`), no los nombres `cover` / `cover_description` de películas. Las cards de "Novedades" de la home siguen usando imágenes fijas de `public/img`; eso no es el campo de `posts`.
+- `posts`: `id`, `title`, `summary`, `content`, `image` (string nullable), `published_at`, `created_at`, `updated_at`. `image` es el path en el disk `public` (`posts/...`), copiando el patrón de `cover`, no los nombres `cover` / `cover_description`. Las cards de "Novedades" de la home siguen usando imágenes fijas de `public/img`; eso no es el campo de `posts`.
 
 ## Vistas
 
@@ -135,11 +135,11 @@ Referencia: `proyecto-docente/app/Http/Controllers/AuthController.php`, `databas
 
 Referencia: `MoviesController@store` / `update` / `destroy` y `2026_09_29_223250_add_cover_columns_to_movies_table.php`.
 
-El 1er parcial no lo pedía y se sacó `posts.image`. El 2do sí lo pide para el blog. Cuando se implemente:
+El 1er parcial no lo pedía y se sacó `posts.image`. El 2do sí (paso 23): columna `image` string nullable, migración `Schema::table` `add_image_column_to_posts_table`.
 
-- Columna string nullable en `posts` (migración nueva o edición de `create_posts_table` si se recrea la base).
-- `if ($request->hasFile('...')) { $data['...'] = $request->file('...')->store('...', 'public'); }` — versión activa de `store` en el alta, disk `public`.
-- Al editar o borrar, si había archivo viejo: `Storage::exists` + `Storage::delete`.
+- `if ($request->hasFile('image')) { $data['image'] = $request->file('image')->store('posts', 'public'); }` — disk `public` también en `update`.
+- Al editar o borrar, si había archivo viejo: `Storage::disk('public')->exists` + `Storage::disk('public')->delete`. El disk default de Laravel 13 es `local`; sin `'public'` no se encuentra el archivo.
+- En las vistas, `asset('storage/' . $post->image)`. `Storage::url()` arma la URL con `APP_URL`; en local eso queda en `http://localhost` y no coincide con `php artisan serve` (`:8000`). `exists` / `delete` siguen en `Storage::disk('public')`.
 - El zip de entrega **no** incluye el link `public/storage`. `storage:link` es local.
 
 ## Nombres y responsabilidad

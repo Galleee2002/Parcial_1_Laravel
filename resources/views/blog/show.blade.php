@@ -15,6 +15,14 @@
             <h1 class="mt-3 text-4xl font-semibold leading-tight tracking-tight md:text-5xl">{{ $post->title }}</h1>
             <p class="mt-6 text-xl text-zinc-600">{{ $post->summary }}</p>
 
+            <div class="mt-8">
+                @if ($post->image != null && Storage::disk('public')->exists($post->image))
+                    <img class="w-full rounded-md" src="{{ asset('storage/' . $post->image) }}" alt="{{ $post->title }}">
+                @else
+                    <p class="text-sm text-zinc-500">Sin imagen.</p>
+                @endif
+            </div>
+
             <section class="mt-10 border-t border-zinc-200 pt-10">
                 <h2 class="sr-only">Contenido</h2>
                 <p class="max-w-prose whitespace-pre-line border-l-4 border-blue-600 pl-4 text-lg leading-8 text-zinc-800 first-letter:float-left first-letter:mr-3 first-letter:text-6xl first-letter:font-semibold first-letter:leading-none first-letter:text-blue-600">{{ $post->content }}</p>

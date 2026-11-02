@@ -160,9 +160,15 @@ No se implementa hasta que se pida. Los pasos de abajo son el orden tentativo se
 
 Es el paso 20, ya aplicado: `->middleware('auth')` en cada `admin.posts.*` y `$middleware->redirectGuestsTo(fn () => route('auth.login.form'))`. El 2do pide además un middleware **personalizado de administrador**; no se inventa el rol acá. Este corte usa el `auth` de Laravel, como el docente, y no adelanta el chequeo de rol.
 
-### 23. Imágenes en las entradas — no hecho
+### 23. Imágenes en las entradas — hecho
 
-El 2do pide alta/modificación de imágenes en el blog. El docente lo muestra en `cover`. Patrón: migración `Schema::table` (o reponer la columna en `create_posts_table` si se recrea la base), `hasFile` + `store(..., 'public')`, borrar el archivo viejo con `Storage::delete`. No copiar los nombres `cover` / `cover_description`. El zip no incluye `public/storage`.
+Migración `2026_11_02_100000_add_image_column_to_posts_table` con `Schema::table`: columna `image` (`string` nullable). `Post::$fillable` suma `image`. El seeder no carga archivos: las entradas seed quedan sin imagen, como las películas del docente sin `cover`.
+
+`AdminPostsController@store` y `update` copian el patrón de `MoviesController`: después de `validate()`, `if ($request->hasFile('image')) { $data['image'] = $request->file('image')->store('posts', 'public'); }`. `$data` sigue saliendo de `validate()`. En `update` se guarda `$oldImage` antes de actualizar; si llegó un archivo nuevo y el viejo existe en el disk `public`, `Storage::disk('public')->delete($oldImage)`. `destroy` borra la fila y, si había archivo, lo elimina del mismo disk. No se copia `DB::transaction` (eso es de la pivot de géneros). El `store()` de `update` usa disk `'public'` (el docente a veces lo omite). `exists` / `delete` / `url` van con `Storage::disk('public')` porque en Laravel 13 el disk default es `local`.
+
+Formularios de alta y edición: `enctype="multipart/form-data"`, `type="file"` `name="image"` con `@class` / `@error` / `aria-*`. En edición, bloque “Imagen actual” como `movies/edit.blade.php` y la ayuda “Solo seleccioná una nueva imagen si querés reemplazar la actual”. `blog/show.blade.php` muestra la foto con `asset('storage/' . $post->image)` o “Sin imagen.”, como `movies/show.blade.php`. `exists` / `delete` van con `Storage::disk('public')`; `asset()` se usa en el `src` porque `Storage::url()` concatena `APP_URL` y en local no coincide con `artisan serve`. El listado admin, `/blog` y la confirmación de baja no muestran la imagen. Las cards de “Novedades” de la home siguen con `public/img/card-{n}.webp`.
+
+No se copiaron `cover` / `cover_description`. El zip no incluye `public/storage`; `php artisan storage:link` es local.
 
 ### 24. Relaciones Eloquent — no hecho (técnica sí, schema no)
 
