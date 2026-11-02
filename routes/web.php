@@ -19,10 +19,10 @@ Route::get('/admin/login', [AuthController::class, 'showForm'])->name('auth.logi
 Route::post('/admin/login', [AuthController::class, 'processForm'])->name('auth.login.process');
 Route::post('/admin/logout', [AuthController::class, 'processLogout'])->name('auth.logout.process');
 
-Route::get('/admin/posts', [AdminPostsController::class, 'index'])->name('admin.posts.index');
-Route::get('/admin/posts/crear', [AdminPostsController::class, 'create'])->name('admin.posts.create');
-Route::post('/admin/posts/crear', [AdminPostsController::class, 'store'])->name('admin.posts.store');
-Route::get('/admin/posts/{id}/editar', [AdminPostsController::class, 'edit'])->name('admin.posts.edit')->whereNumber('id');
-Route::post('/admin/posts/{id}/editar', [AdminPostsController::class, 'update'])->name('admin.posts.update')->whereNumber('id');
-Route::get('/admin/posts/{id}/eliminar', [AdminPostsController::class, 'delete'])->name('admin.posts.delete')->whereNumber('id');
-Route::post('/admin/posts/{id}/eliminar', [AdminPostsController::class, 'destroy'])->name('admin.posts.destroy')->whereNumber('id');
+Route::get('/admin/posts', [AdminPostsController::class, 'index'])->name('admin.posts.index')->middleware('auth');
+Route::get('/admin/posts/crear', [AdminPostsController::class, 'create'])->name('admin.posts.create')->middleware('auth');
+Route::post('/admin/posts/crear', [AdminPostsController::class, 'store'])->name('admin.posts.store')->middleware('auth');
+Route::get('/admin/posts/{id}/editar', [AdminPostsController::class, 'edit'])->name('admin.posts.edit')->whereNumber('id')->middleware('auth');
+Route::post('/admin/posts/{id}/editar', [AdminPostsController::class, 'update'])->name('admin.posts.update')->whereNumber('id')->middleware('auth');
+Route::get('/admin/posts/{id}/eliminar', [AdminPostsController::class, 'delete'])->name('admin.posts.delete')->whereNumber('id')->middleware('auth');
+Route::post('/admin/posts/{id}/eliminar', [AdminPostsController::class, 'destroy'])->name('admin.posts.destroy')->whereNumber('id')->middleware('auth');

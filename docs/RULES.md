@@ -4,7 +4,9 @@ Estas reglas pueden cambiar cuando el docente suba clases nuevas. Si una clase c
 
 Acá está cómo se escribe el código. El orden de las features está en [ROADMAP.md](ROADMAP.md).
 
-La fuente de verdad es `proyecto-docente`. No se agrega una técnica que esa carpeta no muestre y que el parcial no pida. Cuando el docente deja una alternativa comentada y otra activa, se copia la activa. El dominio (qué páginas y qué tablas) sale de [PRD.md](PRD.md) y de la consigna del parcial ([Portales y Comercio Electrónico - Primer Parcial.pdf](Portales%20y%20Comercio%20Electrónico%20-%20Primer%20Parcial.pdf)). Una feature que la consigna no pide no se agrega aunque el docente la muestre, como la subida de archivos.
+La fuente de verdad es `proyecto-docente`. No se agrega una técnica que esa carpeta no muestre y que el parcial no pida. Cuando el docente deja una alternativa comentada y otra activa, se copia la activa. El dominio (qué páginas y qué tablas) sale de [PRD.md](PRD.md) y de la consigna del parcial ([Portales y Comercio Electrónico - Segundo Parcial.pdf](Portales%20y%20Comercio%20Electrónico%20-%20Segundo%20Parcial.pdf)). El inventario de lo que el docente ya mostró para el 2do está en [SEGUNDO_PARCIAL.md](SEGUNDO_PARCIAL.md).
+
+Una feature que la consigna no pide no se agrega aunque el docente la muestre: verificación de edad (`EnsureIsOver18YearsOld`, sesión `is_over_18`), mails de reserva (`MovieReserved`, `MoviesReservationController`) y Bootstrap.
 
 Cuando el parcial obliga a apartarse del docente, la regla lo dice y explica por qué. Esas excepciones son pocas y se tienen que poder justificar en el coloquio.
 
@@ -14,9 +16,10 @@ Cuando el parcial obliga a apartarse del docente, la regla lo dice y explica por
 - Form Requests. La validación es `$request->validate()` en el controller.
 - Verbos PUT y DELETE. El formulario se muestra con GET y se procesa con POST.
 - Validación del navegador. No se usan atributos como `required`, `min` o `max`. Los inputs pueden usar `type` (`text`, `email`, `date`, `password`); como `type="email"` activa la validación del navegador, el formulario que lo tenga lleva `novalidate`.
-- Filtrar, ordenar o limitar consultas, ni con el Query Builder (`Model::where()`, `orderBy()`, `limit()`) ni con métodos de la `Collection` (`where`, `sortByDesc`, `take`). El docente no lo muestra. Ver "Vistas" para cómo se muestra solo una parte de un listado. Única excepción: la home, porque el parcial pide "las últimas 3 entradas del blog" y con `Post::all()` + `@if` no se puede saber cuáles son las más recientes. `HomeController` usa `Post::orderBy('published_at', 'desc')->limit(3)->get()`; el resto del sitio sigue con `all()`.
+- Filtrar, ordenar o limitar consultas **hasta que un paso del ROADMAP lo pida**. El docente ahora sí lo muestra: `Movie::with(['rating', 'genres'])->paginate(2)` y `Genre::orderBy('name')`. En RestoCode, hoy, la única excepción hecha es la home: `Post::orderBy('published_at', 'desc')->limit(3)->get()`, porque el 1er parcial pide las últimas 3 entradas. El resto del sitio sigue con `all()` y, si hace falta un subconjunto, `@if` en la vista.
 - Bootstrap y hojas en `public/css`. El docente las carga en sus layouts (su proyecto trae Tailwind y Vite instalados, pero no los usa). La consigna permite Bootstrap o Tailwind; RestoCode usa Tailwind cargado por Vite.
-- Subida de archivos. El docente ya la muestra (`MoviesController` con `hasFile()`, `store()` y `Storage::delete()`, columnas `cover` y `cover_description`), pero la consigna no la pide. Las entradas no llevan imagen en la base. Las cards de "Novedades" de la home usan imágenes fijas de `public/img` (`card-1.webp`, `card-2.webp`, `card-3.webp`) elegidas por posición con `$loop->iteration`; son decoración de la vista, no un campo de `posts`.
+- Verificación de edad, mails y reservas de películas. El docente los muestra; la consigna del 2do no los pide.
+- Registro de usuarios, roles, listado de usuarios del admin y contratación de un servicio: el docente **todavía no** los muestra. No se inventan. Ver [SEGUNDO_PARCIAL.md](SEGUNDO_PARCIAL.md).
 
 ## Rutas
 
@@ -36,7 +39,7 @@ Referencia: `proyecto-docente/app/Http/Controllers/MoviesController.php`, `HomeC
 
 - La clase extiende `Controller` y el nombre termina en `Controller`.
 - Un controller por responsabilidad. La home no lista el ABM. El ABM de entradas no renderiza el sitio público. El login vive en `AuthController`.
-- Lectura: `Model::all()`, `find` o `findOrFail` (salvo las novedades de la home, ver "Qué no se usa"). Pasar datos con el segundo argumento de `view('carpeta.vista', ['clave' => $valor])`.
+- Lectura: `Model::all()`, `find` o `findOrFail` (salvo las novedades de la home, ver "Qué no se usa"). `with`, `orderBy` y `paginate` existen en el docente; no se usan en RestoCode hasta que el ROADMAP lo pida. Pasar datos con el segundo argumento de `view('carpeta.vista', ['clave' => $valor])`.
 - Escritura: `Model::create($data)`, `$modelo->update($data)`, `$modelo->delete()`.
 - `$data` es lo que devuelve `$request->validate()`, como `$credentials` en `AuthController`. No se usa `$_POST` ni `$request->input()` para guardar. El docente guarda con `$request->input()` en `MoviesController`, pero en `AuthController` ya usa el retorno de `validate()`; así solo se guardan campos validados.
 - Después de crear, editar o borrar: `redirect()->route('...')->with('feedback.message', '...')`.
@@ -51,14 +54,16 @@ Referencia: `proyecto-docente/app/Models/Movie.php`.
 - La PK es `id`. No se copia `movie_id` ni `$primaryKey`.
 - `$fillable` lista solo los campos que el formulario puede asignar en masa.
 - El precio de un servicio se guarda en centavos (`unsignedInteger`) y se lee en pesos con `Attribute::make`. Se escribe como la versión activa de `Movie::price()`: argumentos por nombre y arrow functions (`get: fn ($value) => $value / 100`, `set: fn ($value) => $value * 100`).
-- No se usa el atributo `#[Fillable]` de Laravel 13 en los modelos nuestros. El docente escribe `protected $fillable`. `User.php` queda como viene.
+- No se usa el atributo `#[Fillable]` de Laravel 13 en los modelos nuestros. El docente escribe `protected $fillable` en `Movie`. `User.php` queda como viene (él sí usa `#[Fillable]` ahí).
+- Relaciones: el docente define un método por relación. 1:n referenciante = `belongsTo(Modelo::class, 'fk', 'pk')`. n:n = `belongsToMany(...)` con tabla pivot y nombres de FKs. En el controller: `attach` al crear, `sync` al editar, `detach` al borrar. **No se copian** `Rating` / `Genre` ni se diseña acá la contratación usuario–servicio: esa tabla todavía no está en el docente. Cuando se implemente, se copia esta sintaxis y el dominio sale de la consigna.
 
 ## Migraciones y seeders
 
-Referencia: `proyecto-docente/database/migrations/2026_08_25_231756_create_movies_table.php`, `2026_09_29_223250_add_cover_columns_to_movies_table.php`, `MovieSeeder.php`, `UserSeeder.php` y `DatabaseSeeder.php`.
+Referencia: `proyecto-docente/database/migrations/2026_08_25_231756_create_movies_table.php`, `2026_09_29_223250_add_cover_columns_to_movies_table.php`, `2026_10_06_222104_add_rating_fk_column_to_movies_table.php`, `2026_10_13_220802_create_movies_have_genres_table.php`, `MovieSeeder.php`, `UserSeeder.php`, `GenreSeeder.php`, `MovieHasGenreSeeder.php` y `DatabaseSeeder.php`.
 
 - Migración anónima con `Schema::create` y `down()` que hace `Schema::dropIfExists`.
-- Para cambiar una tabla que ya existe en una base con datos que hay que conservar, no se edita su migración: se crea una nueva con `Schema::table`, como `add_cover_columns_to_movies_table`. El `down()` deshace el cambio (si el `up()` agrega columnas, el `down()` las quita con `dropColumn`, y al revés). Mientras RestoCode solo corra en local y no se haya entregado, se puede editar la migración original y recrear todo con `php artisan migrate:fresh --seed`, como se hizo al quitar `posts.image`.
+- Para cambiar una tabla que ya existe en una base con datos que hay que conservar, no se edita su migración: se crea una nueva con `Schema::table`, como `add_cover_columns_to_movies_table` o `add_rating_fk_column_to_movies_table`. El `down()` deshace el cambio (si el `up()` agrega columnas, el `down()` las quita con `dropColumn`, y al revés). Mientras RestoCode solo corra en local y no se haya entregado el 2do, se puede editar la migración original y recrear todo con `php artisan migrate:fresh --seed` (así se quitó `posts.image` en el 1er; para volver a poner imagen en el 2do, si la base no tiene datos que conservar, se puede sumar la columna en `create_posts_table` o con una migración `Schema::table`, copiando al docente).
+- FKs: el docente usa `$table->foreign('rating_fk')->references('rating_id')->on('ratings')` y, en la pivot, `$table->foreignId('movie_fk')->constrained(table: 'movies', column: 'movie_id')` más `foreign()` para `genre_fk`. PK de pivot = combinación de las dos FKs. En RestoCode las PK siguen siendo `id`; no se copia `movie_id`.
 - Toda tabla de negocio cierra con `$table->timestamps()`.
 - La tabla `users` se deja como viene (`0001_01_01_000000_create_users_table.php`). La consigna permite usarla. Tiene `id`, `name`, `email`, `password`, `remember_token` y fechas; `name` es obligatorio, así que el seeder lo completa.
 - Los seeders insertan con `DB::table('...')->insert([...])` y completan `created_at` y `updated_at` con `now()`, como `MovieSeeder`. El `UserSeeder` del docente no las completa; en RestoCode se completan en todos para que ninguna fecha quede en `null`.
@@ -72,7 +77,7 @@ Referencia: `proyecto-docente/database/migrations/2026_08_25_231756_create_movie
 - `DB_DATABASE` se llama `apellido_nombre` (o `apellido1_apellido2` si el trabajo es en grupo), sin prefijos. Un nombre como `dw3_apellido1_apellido2` no cumple la consigna y puede restar un punto.
 - `users`: la tabla de Laravel (`id`, `name`, `email`, `password`, ...).
 - `services`: `id`, `title`, `short_description`, `full_description`, `price`, `delivery_days`, `is_active`, `created_at`, `updated_at`. Es la tabla que cumple los cinco campos que pide la consigna.
-- `posts`: `id`, `title`, `summary`, `content`, `published_at`, `created_at`, `updated_at`.
+- `posts`: hoy `id`, `title`, `summary`, `content`, `published_at`, `created_at`, `updated_at`. El 2do pide alta/modificación de imágenes: cuando se implemente, se suma una columna de archivo copiando el patrón de `cover` (string nullable + `hasFile` / `store` / `Storage::delete`), no los nombres `cover` / `cover_description` de películas. Las cards de "Novedades" de la home siguen usando imágenes fijas de `public/img`; eso no es el campo de `posts`.
 
 ## Vistas
 
@@ -122,8 +127,20 @@ Referencia: `proyecto-docente/app/Http/Controllers/AuthController.php`, `databas
 - `processForm` guarda en `$credentials` lo que devuelve `$request->validate()` (`email` y `password`) y llama a `Auth::attempt($credentials)`, que es la versión activa del docente (las variantes con el array armado a mano quedan comentadas). Si falla, vuelve al login con el feedback de error. Si entra, redirige a `admin.posts.index` con el feedback de bienvenida.
 - Al entrar se llama a `$request->session()->regenerate()`. Es una excepción al docente, que no lo hace: la documentación de Laravel lo pide para evitar la fijación de sesión, igual que el docente sigue esa documentación en el logout.
 - `processLogout` hace `Auth::logout()`, `$request->session()->invalidate()` y `$request->session()->regenerateToken()`, y vuelve al login con feedback.
-- Las rutas del ABM se protegen con el middleware `auth` de Laravel. No se escribe un middleware propio porque el docente usa el de Laravel.
+- Las rutas del ABM llevan el middleware `auth` de Laravel, una por una, como crear, editar y eliminar de `movies` (paso 20). El listado del docente queda público porque es el catálogo; en RestoCode `admin.posts.index` también lleva `auth` porque el catálogo es `/blog`.
 - En el `withMiddleware` de `bootstrap/app.php` se configura `$middleware->redirectGuestsTo(fn () => route('auth.login.form'))`, para que un visitante sin sesión vaya a `/admin/login`.
+- Middleware **propio**: el docente registra un alias en el mismo `withMiddleware` (`'over18' => EnsureIsOver18YearsOld::class`) y lo aplica con `->middleware('over18')`. La clase tiene `handle(Request $request, Closure $next)` y, si deja seguir, `return $next($request)`. El 2do pide un middleware personalizado que verifique **administrador**. Ese chequeo de rol **no está** en el docente (el suyo es mayoría de edad). Se copia la estructura; no se copia `is_over_18` ni `AgeVerificationController`. No se escribe el middleware de admin hasta que exista el rol o el usuario pida implementarlo con lo que hay.
+
+## Subida de archivos
+
+Referencia: `MoviesController@store` / `update` / `destroy` y `2026_09_29_223250_add_cover_columns_to_movies_table.php`.
+
+El 1er parcial no lo pedía y se sacó `posts.image`. El 2do sí lo pide para el blog. Cuando se implemente:
+
+- Columna string nullable en `posts` (migración nueva o edición de `create_posts_table` si se recrea la base).
+- `if ($request->hasFile('...')) { $data['...'] = $request->file('...')->store('...', 'public'); }` — versión activa de `store` en el alta, disk `public`.
+- Al editar o borrar, si había archivo viejo: `Storage::exists` + `Storage::delete`.
+- El zip de entrega **no** incluye el link `public/storage`. `storage:link` es local.
 
 ## Nombres y responsabilidad
 

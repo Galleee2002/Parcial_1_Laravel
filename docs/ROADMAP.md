@@ -4,9 +4,9 @@ Este orden puede cambiar cuando el docente suba clases nuevas. Si una clase trae
 
 Acá está en qué orden se construye cada feature. Cómo se escribe el código está en [RULES.md](RULES.md). No se pasa al paso siguiente si el anterior no se puede abrir en el navegador.
 
-El proyecto es la raíz de este repositorio, en Laravel 13. `proyecto-docente` no se modifica ni se entrega: es la referencia de cómo escribe el docente (está en `.gitignore`). El dominio sale de [PRD.md](PRD.md): servicios para locales gastronómicos y un blog. El admin solo administra entradas.
+El proyecto es la raíz de este repositorio, en Laravel 13. `proyecto-docente` no se modifica ni se entrega: es la referencia de cómo escribe el docente (está en `.gitignore`). El dominio sale de [PRD.md](PRD.md): servicios para locales gastronómicos y un blog. El admin administra entradas; el 2do suma listado de usuarios cuando exista la clase.
 
-Lo que el docente muestra pero la consigna no pide queda afuera: la subida de archivos (`cover` en `movies`) no se copia. La consigna suma puntos por "tablas de relaciones extras"; el docente todavía lo tiene como TODO ("Relaciones de 1-n" en `MoviesController@destroy`). Cuando lo muestre, se evalúa sumar un paso.
+Lo que el docente muestra y la consigna no pide queda afuera: verificación de edad, mails de reserva, Bootstrap. Lo que el 2do pide y el docente **ya** muestra (upload de `cover`, relaciones `belongsTo` / `belongsToMany`, middleware propio + alias) se copia al implementar, con el dominio de RestoCode. Detalle en [SEGUNDO_PARCIAL.md](SEGUNDO_PARCIAL.md). El paso 20 ya protege el ABM con `auth` y `redirectGuestsTo`. El middleware personalizado de administrador y el campo de rol siguen sin hacerse.
 
 Equivalencia con el ABM de películas del docente:
 
@@ -64,7 +64,7 @@ Tres entradas sobre digitalización gastronómica (menú QR, reservas online, we
 
 ## 12. Layout admin y tabla de entradas — hecho
 
-`/admin/posts` con `AdminPostsController@index` (`Post::all()`, con PHPDoc), controller separado de `PostsController`, ruta `admin.posts.index` sin `->middleware('auth')` hasta el paso 20 y vista `admin/posts/index.blade.php`: tabla con título, fecha de publicación en `<time datetime>` y acciones Ver (`route('blog.show', ['id' => $post->id])`), Editar y Eliminar, más el botón "Publicar una nueva entrada". La tabla y los botones salen de `movies/index.blade.php`. El layout `components/layouts/admin.blade.php` sigue el del docente pasado a `route()` como el layout `main`, con el mismo `@vite`, nav lateral con `aria-current` y el aviso de `feedback.message` de [RULES.md](RULES.md). Los enlaces de crear, editar y eliminar usaron `url()` hasta que existieron `admin.posts.create`, `admin.posts.edit` y `admin.posts.delete` en los pasos 13, 15 y 16, como pasó con el blog entre los pasos 9 y 10. Con el seeder, la tabla lista las tres entradas.
+`/admin/posts` con `AdminPostsController@index` (`Post::all()`, con PHPDoc), controller separado de `PostsController`, ruta `admin.posts.index` con `->middleware('auth')` desde el paso 20 y vista `admin/posts/index.blade.php`: tabla con título, fecha de publicación en `<time datetime>` y acciones Ver (`route('blog.show', ['id' => $post->id])`), Editar y Eliminar, más el botón "Publicar una nueva entrada". La tabla y los botones salen de `movies/index.blade.php`. El layout `components/layouts/admin.blade.php` sigue el del docente pasado a `route()` como el layout `main`, con el mismo `@vite`, nav lateral con `aria-current` y el aviso de `feedback.message` de [RULES.md](RULES.md). Los enlaces de crear, editar y eliminar usaron `url()` hasta que existieron `admin.posts.create`, `admin.posts.edit` y `admin.posts.delete` en los pasos 13, 15 y 16, como pasó con el blog entre los pasos 9 y 10. Con el seeder, la tabla lista las tres entradas.
 
 ## 13. Alta de una entrada — hecho
 
@@ -88,21 +88,17 @@ La consigna no pide imagen en las entradas, así que la columna y el campo del f
 
 ## 18. Login — hecho
 
-`/admin/login` con `AuthController@showForm` (muestra el formulario) y `AuthController@processForm` (valida e inicia la sesión), ambos con PHPDoc, rutas GET y POST `auth.login.form` y `auth.login.process` sin middleware, y vista `auth/login.blade.php` con `<x-layouts.main>`. El docente usa la URL `/iniciar-sesion`; acá va bajo `/admin` con los mismos nombres de ruta. Sigue el patrón de `AuthController@processForm` y `auth/login.blade.php` del docente: `$credentials = $request->validate(...)` con `email` (`required|email`) y `password` (`required`), con mensajes en español porque la consigna pide informar los errores, y `Auth::attempt($credentials)`, que es la versión activa del docente. Si falla, vuelve a `auth.login.form` con `feedback.message`, `feedback.type` `danger` y `->withInput()`, que no reenvía la contraseña. Si entra, `$request->session()->regenerate()` (excepción al docente, ver [RULES.md](RULES.md)) y redirección a `admin.posts.index` con "Sesión iniciada con éxito. ¡Hola de nuevo!". El formulario sigue el patrón de `admin/posts/create.blade.php`: aviso general con `$errors->any()`, `@class`, `@error` con `aria-invalid` y `aria-errormessage`, `@csrf`, `old('email')` (la contraseña no se rellena) y `novalidate`, porque el email usa `type="email"`. El aviso de credenciales incorrectas lo muestra el bloque de `feedback.message` del layout `main`. Campos vacíos muestran "El email es obligatorio." y "La contraseña es obligatoria."; un email sin formato muestra su error; una contraseña incorrecta vuelve con el aviso rojo y el email escrito; `admin@restocode.com` / `restocode` llega a `/admin/posts` con el mensaje de bienvenida y la cookie de sesión cambia. El nav público no enlaza al login: se entra escribiendo `/admin/login`. Hasta el paso 20, `/admin/posts` sigue abriendo sin sesión.
+`/admin/login` con `AuthController@showForm` (muestra el formulario) y `AuthController@processForm` (valida e inicia la sesión), ambos con PHPDoc, rutas GET y POST `auth.login.form` y `auth.login.process` sin middleware, y vista `auth/login.blade.php` con `<x-layouts.main>`. El docente usa la URL `/iniciar-sesion`; acá va bajo `/admin` con los mismos nombres de ruta. Sigue el patrón de `AuthController@processForm` y `auth/login.blade.php` del docente: `$credentials = $request->validate(...)` con `email` (`required|email`) y `password` (`required`), con mensajes en español porque la consigna pide informar los errores, y `Auth::attempt($credentials)`, que es la versión activa del docente. Si falla, vuelve a `auth.login.form` con `feedback.message`, `feedback.type` `danger` y `->withInput()`, que no reenvía la contraseña. Si entra, `$request->session()->regenerate()` (excepción al docente, ver [RULES.md](RULES.md)) y redirección a `admin.posts.index` con "Sesión iniciada con éxito. ¡Hola de nuevo!". El formulario sigue el patrón de `admin/posts/create.blade.php`: aviso general con `$errors->any()`, `@class`, `@error` con `aria-invalid` y `aria-errormessage`, `@csrf`, `old('email')` (la contraseña no se rellena) y `novalidate`, porque el email usa `type="email"`. El aviso de credenciales incorrectas lo muestra el bloque de `feedback.message` del layout `main`. Campos vacíos muestran "El email es obligatorio." y "La contraseña es obligatoria."; un email sin formato muestra su error; una contraseña incorrecta vuelve con el aviso rojo y el email escrito; `admin@restocode.com` / `restocode` llega a `/admin/posts` con el mensaje de bienvenida y la cookie de sesión cambia. El nav público no enlaza al login: se entra escribiendo `/admin/login`. Desde el paso 20, `/admin/posts` sin sesión redirige a `/admin/login`.
 
 ## 19. Logout — hecho
 
-`AuthController@processLogout` (con PHPDoc) y ruta POST `/admin/logout` con el nombre `auth.logout.process`, sin middleware. El docente usa la URL `/cerrar-session`; acá va bajo `/admin` con el mismo nombre de ruta. Sigue el patrón de `AuthController@processLogout` del docente: `Auth::logout()`, `$request->session()->invalidate()`, `$request->session()->regenerateToken()` y redirección a `auth.login.form` con "Sesión cerrada con éxito. ¡Te esperamos pronto!", que el bloque de `feedback.message` del layout `main` muestra en verde. El botón es un `<li>` nuevo en el nav del layout `admin`, debajo de "Ver sitio": un `<form method="post">` con `@csrf` y un `<button>` con `auth()->user()->email` en el texto. Va dentro de `@auth`, como el nav del docente, porque hasta el paso 20 `/admin/posts` abre sin sesión y `auth()->user()` sería `null`. Con sesión, el nav muestra "admin@restocode.com (Cerrar sesión)"; al hacer clic, el POST responde 302 a `/admin/login` con el aviso de salida; después, el panel ya no muestra el botón. Que `/admin/posts` no abra sin sesión se prueba en el paso 20.
+`AuthController@processLogout` (con PHPDoc) y ruta POST `/admin/logout` con el nombre `auth.logout.process`, sin middleware. El docente usa la URL `/cerrar-session`; acá va bajo `/admin` con el mismo nombre de ruta. Sigue el patrón de `AuthController@processLogout` del docente: `Auth::logout()`, `$request->session()->invalidate()`, `$request->session()->regenerateToken()` y redirección a `auth.login.form` con "Sesión cerrada con éxito. ¡Te esperamos pronto!", que el bloque de `feedback.message` del layout `main` muestra en verde. El botón es un `<li>` nuevo en el nav del layout `admin`, debajo de "Ver sitio": un `<form method="post">` con `@csrf` y un `<button>` con `auth()->user()->email` en el texto. Va dentro de `@auth`, como el nav del docente. Desde el paso 20 el ABM no se renderiza sin sesión, así que ese layout solo llega con usuario. Con sesión, el nav muestra "admin@restocode.com (Cerrar sesión)"; al hacer clic, el POST responde 302 a `/admin/login` con el aviso de salida; después, el panel ya no se abre. Que `/admin/posts` no abra sin sesión quedó probado en el paso 20.
 
-## 20. Protección del admin
+## 20. Protección del admin — hecho
 
-Cortar el ABM de entradas si no hay sesión. El login queda afuera.
+Las ocho rutas `admin.posts.*` de `routes/web.php` llevan `->middleware('auth')`, una por una. En el docente, crear, editar y eliminar de `movies` llevan ese middleware; el listado (`movies.index`) queda público porque es el catálogo. Acá el catálogo es `/blog`, así que `admin.posts.index` también lleva `auth`. En `bootstrap/app.php`, `withMiddleware` configura `$middleware->redirectGuestsTo(fn () => route('auth.login.form'))`, igual que el docente. Se usa el middleware `auth` de Laravel; no se escribe uno propio ni se copia el alias `over18`. Login y logout siguen sin `auth`, para no armar un bucle con esa redirección.
 
-Archivos: `routes/web.php` (`->middleware('auth')` en cada ruta de `admin.posts.*`) y el `withMiddleware` de `bootstrap/app.php`.
-
-Patrón: las rutas de `movies` del docente, cada una con `->middleware('auth')`. En `bootstrap/app.php`, `$middleware->redirectGuestsTo(fn () => route('auth.login.form'))`, igual que el docente. Se usa el middleware `auth` de Laravel; no se escribe uno propio.
-
-Probar: sin sesión, crear, editar, eliminar y el listado redirigen a `/admin/login`. Con sesión, el ABM sigue funcionando. `/`, `/servicios` y `/blog` siguen públicos.
+Sin sesión, el listado, crear, editar y eliminar (GET y POST) responden 302 a `/admin/login` y el POST no escribe. Con `admin@restocode.com` / `restocode` el ABM lista, crea, edita y borra, y el logout vuelve al login. `/`, `/servicios` y `/blog` siguen públicos. Un id no numérico del ABM sigue en 404. `/admin/login` sigue abriendo.
 
 ## 21. Entrega
 
@@ -155,3 +151,35 @@ Archivos: `resources/views/components/layouts/main.blade.php` y `resources/js/ap
 Patrón: `<footer>` con `bg-zinc-900 text-white` y el contenedor `mx-auto max-w-6xl px-4` del header. Arriba, una banda (`<section>`) con `h2` "¿Listo para digitalizar tu local?" y el botón "Ver servicios" a `route('services.index')`, con las mismas clases que el botón del hero. Debajo, tres columnas: la marca con la tagline del hero; un `<nav aria-label="Pie de página">` con Inicio, Servicios y Blog (`route()` y `hover:text-blue-300`, como el nav del header); y un `<address>` con datos de contacto ficticios (email con `mailto:`, teléfono con `tel:` y ciudad) acompañados por los íconos `mail`, `phone` y `map-pin` de Lucide con `aria-hidden="true"`, registrados en `app.js` como pide [RULES.md](RULES.md). Cierra una barra con `© {{ date('Y') }} RestoCode`. Todo es estático: no se lee la base ni se toca ningún controller.
 
 Probar: `/`, `/servicios`, `/servicios/{id}`, `/blog`, `/blog/{id}` y `/admin/login` muestran el footer con los íconos, en columnas en desktop y apilado en mobile. `/admin/posts` sigue con el footer del panel.
+
+## Segundo parcial
+
+No se implementa hasta que se pida. Los pasos de abajo son el orden tentativo según lo que **ya** está en `proyecto-docente` y lo que **falta** en clase. Si una clase trae otro orden o otra sintaxis, se reemplaza el paso y la regla en [RULES.md](RULES.md).
+
+### 22. Proteger el admin con `auth` — hecho
+
+Es el paso 20, ya aplicado: `->middleware('auth')` en cada `admin.posts.*` y `$middleware->redirectGuestsTo(fn () => route('auth.login.form'))`. El 2do pide además un middleware **personalizado de administrador**; no se inventa el rol acá. Este corte usa el `auth` de Laravel, como el docente, y no adelanta el chequeo de rol.
+
+### 23. Imágenes en las entradas — no hecho
+
+El 2do pide alta/modificación de imágenes en el blog. El docente lo muestra en `cover`. Patrón: migración `Schema::table` (o reponer la columna en `create_posts_table` si se recrea la base), `hasFile` + `store(..., 'public')`, borrar el archivo viejo con `Storage::delete`. No copiar los nombres `cover` / `cover_description`. El zip no incluye `public/storage`.
+
+### 24. Relaciones Eloquent — no hecho (técnica sí, schema no)
+
+El docente muestra 1:n (`Movie` `belongsTo` `Rating`) y n:n (`belongsToMany` géneros + pivot + `attach`/`sync`/`detach`) y seeders de esas tablas. La consigna pide relaciones, modelos relacionados y al menos un usuario con servicio contratado. **No hay** en el docente un usuario–servicio ni compras. No se diseña esa tabla hasta la clase o hasta que se pida implementar copiando solo la sintaxis.
+
+### 25. Middleware propio — no hecho (patrón sí, rol no)
+
+Copiar estructura de `EnsureIsOver18YearsOld` + `alias()` en `bootstrap/app.php`. No copiar verificación de edad. El alias y el chequeo de **administrador** esperan el campo/rol, que el docente todavía no muestra.
+
+### 26. Registro de usuarios — espera clase
+
+La consigna lo pide. En `proyecto-docente` no hay `RegisterController` ni ruta de registro. No se inventa.
+
+### 27. Roles, listado y detalle de usuarios en el admin — espera clase
+
+La consigna pide 2 roles, listar usuarios y ver el detalle con el servicio contratado o las compras (datos por seeders, sin proceso de compra). El docente no tiene ABM de `users` ni relación de contratación. Mail de reserva de películas **no** es eso.
+
+### 28. Entrega del 2do — no hecho
+
+`datos.txt` con carácter “2do parcial”. Zip sin `proyecto-docente`, sin `docs/`, sin `AGENTS.md`, sin el link `public/storage`. Base `apellido1_apellido2` sin prefijo `dw3_`.
