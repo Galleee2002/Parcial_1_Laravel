@@ -77,7 +77,7 @@ Fuente: PDF del segundo parcial. Lo que se mantiene del 1er (sitio + admin, Blad
 |---|---|---|
 | Registro y autenticación de usuarios (sin UI/controllers de auth de Laravel) | Auth de login sí. **Registro no.** | Hecho en el paso 25: `validate`, `Hash::make`, `User::create` y `Auth::attempt` en el `AuthController` propio. |
 | Admin autenticado como **administrador** | `auth` de Laravel sí. Rol admin **no**. | Paso 24: columna `role` con `Schema::table`. No una tabla de roles. |
-| Middleware **personalizado** que verifique al administrador | Patrón de middleware propio sí (`EnsureIsOver18YearsOld`). Contenido de rol **no**. | Paso 26: misma estructura `handle` + alias. Condición: `Auth::user()->role`. No copiar +18. |
+| Middleware **personalizado** que verifique al administrador | Patrón de middleware propio sí (`EnsureIsOver18YearsOld`). Contenido de rol **no**. | Hecho en el paso 26: misma estructura `handle` + alias `administrator`. Condición: `Auth::user()->role`. No se copió +18. |
 | ABM del blog | Sí (ABM de `movies`). | Ya está en `admin/posts`. |
 | Alta/modificación de **imágenes** en el blog | Sí (`cover`). | Hecho en el paso 23: `posts.image`, `store('posts', 'public')`. |
 | Relaciones entre tablas y modelos relacionados | Sí (1:n rating, n:n géneros). | Paso 27: `belongsToMany` usuario–servicio, pivot y seeder. **No** copiar `ratings`/`genres`. Sin `attach`/`sync`/`detach` en un controller. |
@@ -104,6 +104,6 @@ Obligatorias, iguales al 1er más las nuevas:
 
 ## 6. Estado de RestoCode hoy
 
-El código de la raíz es el primer parcial más el paso 20 (`auth` + `redirectGuestsTo`), el paso 23 (imagen en `posts`), el paso 24 (columna `role` en `users`, con `administrador` y `usuario`) y el paso 25 (registro en `/registro`, rol `usuario`, sesión hacia `home`). No hay middleware de administrador, relaciones Eloquent propias ni listado de usuarios.
+El código de la raíz es el primer parcial más el paso 20 (`auth` + `redirectGuestsTo`), el paso 23 (imagen en `posts`), el paso 24 (columna `role` en `users`, con `administrador` y `usuario`), el paso 25 (registro en `/registro`, rol `usuario`, sesión hacia `home`) y el paso 26 (`EnsureIsAdministrator` con alias `administrator` en cada ruta `admin.posts.*`). No hay relaciones Eloquent propias ni listado de usuarios.
 
 Este archivo no autoriza a implementar el 2do. Cuando se pida un paso, se sigue el [ROADMAP.md](ROADMAP.md). La sintaxis activa se copia de `proyecto-docente`. Este inventario describe esa carpeta.

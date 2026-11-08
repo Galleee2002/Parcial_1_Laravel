@@ -192,9 +192,9 @@ Se guarda con `User::create` (como `Post::create`) y `Hash::make` (como `UserSee
 
 Probar: un email nuevo llega a `/` con sesión iniciada. El mismo email otra vez vuelve al formulario con el error de email repetido. Un campo vacío vuelve con su mensaje y lo escrito. `admin@restocode.com` no se puede volver a registrar.
 
-### 26. Middleware de administrador — no hecho
+### 26. Middleware de administrador — hecho
 
-Clase `EnsureIsAdministrator` con `handle(Request $request, Closure $next)`. Si el rol es `administrador`, `return $next($request)`. Si no, redirige a `home` con `feedback.message` y `feedback.type` `danger`. Alias `administrator` en el `withMiddleware` de `bootstrap/app.php`. La estructura se copia de `proyecto-docente/app/Http/Middleware/EnsureIsOver18YearsOld.php`. No se copia la verificación de edad ni `AgeVerificationController`. La condición mira `Auth::user()->role`.
+Clase `EnsureIsAdministrator` con `handle(Request $request, Closure $next)`. Si el rol es `administrador`, `return $next($request)`. Si no, redirige a `home` con `feedback.message` «No tenés permisos de administrador para acceder al panel.» y `feedback.type` `danger`. Alias `administrator` en el `withMiddleware` de `bootstrap/app.php`. La estructura se copia de `proyecto-docente/app/Http/Middleware/EnsureIsOver18YearsOld.php`. No se copia la verificación de edad ni `AgeVerificationController`. La condición mira `Auth::user()->role`.
 
 Cada ruta `admin.posts.*` conserva `->middleware('auth')` y suma `->middleware('administrator')`. El `auth` sigue mandando al invitado a `/admin/login` con `redirectGuestsTo`. El alias corre con el usuario ya autenticado. Login, logout y registro no lo llevan.
 

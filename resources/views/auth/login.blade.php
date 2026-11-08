@@ -59,6 +59,10 @@
                 </div>
 
                 <button class="w-full rounded-lg bg-blue-600 px-4 py-3 text-sm font-medium text-white hover:bg-blue-500" type="submit">Ingresar</button>
+
+                <p class="text-center text-sm text-zinc-600">
+                    <a class="transition-colors hover:text-blue-600" href="{{ route('auth.register.form') }}">¿No tenés cuenta? Creá una</a>
+                </p>
             </form>
         </div>
     </section>
