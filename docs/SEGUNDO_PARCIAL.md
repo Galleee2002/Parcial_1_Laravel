@@ -75,7 +75,7 @@ Fuente: PDF del segundo parcial. Lo que se mantiene del 1er (sitio + admin, Blad
 
 | Pedido del PDF | ¿El docente ya lo muestra? | Qué hacer en RestoCode |
 |---|---|---|
-| Registro y autenticación de usuarios (sin UI/controllers de auth de Laravel) | Auth de login sí. **Registro no.** | Login ya existe. Registro: paso 25, juntando `validate`, `Hash::make`, `User::create` y `Auth::attempt`. |
+| Registro y autenticación de usuarios (sin UI/controllers de auth de Laravel) | Auth de login sí. **Registro no.** | Hecho en el paso 25: `validate`, `Hash::make`, `User::create` y `Auth::attempt` en el `AuthController` propio. |
 | Admin autenticado como **administrador** | `auth` de Laravel sí. Rol admin **no**. | Paso 24: columna `role` con `Schema::table`. No una tabla de roles. |
 | Middleware **personalizado** que verifique al administrador | Patrón de middleware propio sí (`EnsureIsOver18YearsOld`). Contenido de rol **no**. | Paso 26: misma estructura `handle` + alias. Condición: `Auth::user()->role`. No copiar +18. |
 | ABM del blog | Sí (ABM de `movies`). | Ya está en `admin/posts`. |
@@ -104,6 +104,6 @@ Obligatorias, iguales al 1er más las nuevas:
 
 ## 6. Estado de RestoCode hoy
 
-El código de la raíz es el primer parcial más el paso 20 (`auth` + `redirectGuestsTo`) y el paso 23 (imagen en `posts`). No hay registro, columna `role`, middleware de administrador, relaciones Eloquent propias ni listado de usuarios.
+El código de la raíz es el primer parcial más el paso 20 (`auth` + `redirectGuestsTo`), el paso 23 (imagen en `posts`), el paso 24 (columna `role` en `users`, con `administrador` y `usuario`) y el paso 25 (registro en `/registro`, rol `usuario`, sesión hacia `home`). No hay middleware de administrador, relaciones Eloquent propias ni listado de usuarios.
 
 Este archivo no autoriza a implementar el 2do. Cuando se pida un paso, se sigue el [ROADMAP.md](ROADMAP.md). La sintaxis activa se copia de `proyecto-docente`. Este inventario describe esa carpeta.

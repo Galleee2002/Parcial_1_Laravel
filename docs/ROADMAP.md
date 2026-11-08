@@ -174,15 +174,15 @@ Formularios de alta y edición: `enctype="multipart/form-data"`, `type="file"` `
 
 No se copiaron `cover` / `cover_description`. El zip no incluye `public/storage`; `php artisan storage:link` es local.
 
-### 24. Rol — no hecho
+### 24. Rol — hecho
 
 Migración nueva con `Schema::table` sobre `users`, igual que `2026_11_02_100000_add_image_column_to_posts_table`. No se edita `0001_01_01_000000_create_users_table`. Columna `role` (`string`). Valores: `administrador` y `usuario`. No hay tabla de roles. Excepción documentada: el parcial pide dos roles y el docente nunca agregó la columna; la técnica es la de agregar una columna a una tabla que ya existe.
 
-`UserSeeder` deja a `admin@restocode.com` / `restocode` con `role` `administrador` y suma un usuario común `usuario@restocode.com` / `restocode` con `role` `usuario`. Sigue `DB::table('users')->insert()` y `Hash::make`, con `created_at` y `updated_at` en `now()`. En `User`, el `#[Fillable]` de Laravel suma `role`. Sin middleware en este paso.
+`UserSeeder` deja a `admin@restocode.com` / `restocode` (`id` 1, `name` "Admin RestoCode") con `role` `administrador` y suma un usuario común `usuario@restocode.com` / `restocode` (`id` 2, `name` "Usuario RestoCode") con `role` `usuario`. Sigue `DB::table('users')->insert()` y `Hash::make`, con `created_at` y `updated_at` en `now()`. `email_verified_at` y `remember_token` quedan en `null`. En `User`, el `#[Fillable]` de Laravel suma `role`. Sin middleware en este paso.
 
 Probar: `php artisan migrate:fresh --seed` deja los dos usuarios con el rol que corresponde. El login de `admin@restocode.com` sigue abriendo `/admin/posts`.
 
-### 25. Registro — no hecho
+### 25. Registro — hecho
 
 Formulario público en `/registro`, con `AuthController@showRegisterForm` y `AuthController@processRegister` (PHPDoc), rutas GET y POST `auth.register.form` y `auth.register.process`, sin middleware, y vista `auth/register.blade.php` con `<x-layouts.main>`. No es un controller de autenticación de Laravel: son dos métodos más en el `AuthController` que ya tiene el login.
 

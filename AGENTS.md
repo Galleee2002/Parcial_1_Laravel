@@ -36,19 +36,19 @@ Equivalencia: lectura de `movies` → `services`; ABM de `movies` → `admin/pos
 
 Rutas en [`routes/web.php`](routes/web.php):
 
-- Públicas: `home`, `services.index`, `services.show`, `blog.index`, `blog.show`.
+- Públicas: `home`, `services.index`, `services.show`, `blog.index`, `blog.show`, `auth.register.form` / `auth.register.process` (`/registro`).
 - Auth propia: `auth.login.form` / `auth.login.process` (`/admin/login`), `auth.logout.process` (`POST /admin/logout`).
 - ABM: `admin.posts.*` (listar, crear, editar, eliminar con GET de confirmación + POST), cada una con `->middleware('auth')`.
 
 Controllers: `HomeController`, `ServicesController`, `PostsController`, `AdminPostsController`, `AuthController` (`Auth::attempt`, `session()->regenerate()` al entrar).
 
-Tablas: `users` (Laravel, sin tocar), `services` (6 campos de negocio; precio en centavos + accessor), `posts` (`title`, `summary`, `content`, `image` nullable, `published_at`).
+Tablas: `users` (Laravel más columna `role`), `services` (6 campos de negocio; precio en centavos + accessor), `posts` (`title`, `summary`, `content`, `image` nullable, `published_at`).
 
-Seeders: `UserSeeder` (`admin@restocode.com` / `restocode`), 5 servicios (el último inactivo), 3 posts. `php artisan migrate:fresh --seed`.
+Seeders: `UserSeeder` (`admin@restocode.com` / `restocode`, rol `administrador`; `usuario@restocode.com` / `restocode`, rol `usuario`), 5 servicios (el último inactivo), 3 posts. `php artisan migrate:fresh --seed`.
 
 Layouts: `<x-layouts.main>` (sitio y login), `<x-layouts.admin>` (panel).
 
-Las rutas `admin.posts.*` llevan `->middleware('auth')` y `bootstrap/app.php` redirige al invitado con `redirectGuestsTo` hacia `auth.login.form` (paso 20 / 22). El rol es el paso 24 y el middleware personalizado de administrador, el 26. No los implementes hasta que se pida ese paso.
+Las rutas `admin.posts.*` llevan `->middleware('auth')` y `bootstrap/app.php` redirige al invitado con `redirectGuestsTo` hacia `auth.login.form` (paso 20 / 22). El rol ya está (paso 24): columna `role` con `administrador` y `usuario`. El middleware personalizado de administrador es el paso 26. No lo implementes hasta que se pida ese paso.
 
 No hay `datos.txt`.
 
@@ -70,7 +70,7 @@ No se copia, aunque la carpeta lo tenga:
 - `with`, `orderBy`, `paginate`, salvo la excepción ya hecha de las 3 novedades de la home.
 - `attach` / `sync` / `detach` en un controller. La pivot del paso 27 se carga solo en el seeder.
 
-Registro, rol, middleware de administrador, contratación y listado de usuarios los pide el parcial y no vienen armados en el docente. Se arman en los pasos 24 a 28 juntando piezas ya usadas. No se implementa un paso hasta que se pida. Dos excepciones, porque no están en la carpeta ni en la cursada:
+El registro ya está (paso 25): `showRegisterForm` y `processRegister` en el `AuthController`, rol `usuario`. Middleware de administrador, contratación y listado de usuarios los pide el parcial y no vienen armados en el docente. El rol ya está (paso 24). El resto se arma en los pasos 26 a 28 juntando piezas ya usadas. No se implementa un paso hasta que se pida. Dos excepciones, porque no están en la carpeta ni en la cursada:
 
 - Columna `role` (`string`) en `users`, con `administrador` y `usuario`. No una tabla de roles. Técnica: `Schema::table`, como la migración de `posts.image`.
 - Una sola regla nueva en el `validate` del registro: `unique:users,email`. El índice `unique` de la migración de `users` no es esa regla.
@@ -89,7 +89,7 @@ Nombres de ruta, `$fillable`, `route()`, PHPDoc, `feedback.message` / `feedback.
 
 ## Segundo parcial
 
-Los pasos 22 y 23 están hechos. Los pasos 24 a 29 no se implementan salvo que el usuario pida ese paso en el turno. El orden es rol, registro, middleware de administrador, contratación, listado y detalle de usuarios, entrega.
+Los pasos 22, 23, 24 y 25 están hechos. Los pasos 26 a 29 no se implementan salvo que el usuario pida ese paso en el turno. El orden que sigue es middleware de administrador, contratación, listado y detalle de usuarios, entrega.
 
 Detalle en [`docs/ROADMAP.md`](docs/ROADMAP.md) y en [`docs/SEGUNDO_PARCIAL.md`](docs/SEGUNDO_PARCIAL.md).
 

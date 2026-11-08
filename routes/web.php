@@ -19,6 +19,9 @@ Route::get('/admin/login', [AuthController::class, 'showForm'])->name('auth.logi
 Route::post('/admin/login', [AuthController::class, 'processForm'])->name('auth.login.process');
 Route::post('/admin/logout', [AuthController::class, 'processLogout'])->name('auth.logout.process');
 
+Route::get('/registro', [AuthController::class, 'showRegisterForm'])->name('auth.register.form');
+Route::post('/registro', [AuthController::class, 'processRegister'])->name('auth.register.process');
+
 Route::get('/admin/posts', [AdminPostsController::class, 'index'])->name('admin.posts.index')->middleware('auth');
 Route::get('/admin/posts/crear', [AdminPostsController::class, 'create'])->name('admin.posts.create')->middleware('auth');
 Route::post('/admin/posts/crear', [AdminPostsController::class, 'store'])->name('admin.posts.store')->middleware('auth');

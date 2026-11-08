@@ -29,9 +29,9 @@ Referencia: `proyecto-docente/routes/web.php`.
 - El parámetro dinámico se escribe `{id}` y lleva `->whereNumber('id')`.
 - Las rutas con un segmento fijo (`crear`, `listado`) se declaran de forma que `{id}` no las capture. Con `whereNumber('id')` alcanza.
 - Enlaces con `route('nombre', ['id' => $modelo->id])`, no con URLs armadas a mano.
-- Cada ruta del ABM lleva `->middleware('auth')`, una por una, como las de `movies` en el docente. Las rutas públicas y las del login no lo llevan.
+- Cada ruta del ABM lleva `->middleware('auth')`, una por una, como las de `movies` en el docente. Las rutas públicas, las del login y las del registro no lo llevan.
 - El docente pone el login en `/iniciar-sesion` y el logout en `/cerrar-session`. En RestoCode van en `/admin/login` y `/admin/logout` para que todo el panel quede bajo `/admin`; los nombres de ruta son los mismos que los del docente.
-- Nombres: `home`, `services.index`, `services.show`, `blog.index`, `blog.show`, `admin.posts.index`, `admin.posts.create`, `admin.posts.store`, `admin.posts.edit`, `admin.posts.update`, `admin.posts.delete`, `admin.posts.destroy`, `auth.login.form`, `auth.login.process`, `auth.logout.process`.
+- Nombres: `home`, `services.index`, `services.show`, `blog.index`, `blog.show`, `admin.posts.index`, `admin.posts.create`, `admin.posts.store`, `admin.posts.edit`, `admin.posts.update`, `admin.posts.delete`, `admin.posts.destroy`, `auth.login.form`, `auth.login.process`, `auth.logout.process`, `auth.register.form`, `auth.register.process`.
 
 ## Controllers
 
@@ -75,7 +75,7 @@ Referencia: `proyecto-docente/database/migrations/2026_08_25_231756_create_movie
 
 - Motor MySQL. El docente usa MariaDB (`DB_CONNECTION=mariadb` y `DB_ENGINE=InnoDB` en su `.env`); su `.env.example` sigue con SQLite. Los dos motores funcionan igual con estas migraciones.
 - `DB_DATABASE` se llama `apellido_nombre` (o `apellido1_apellido2` si el trabajo es en grupo), sin prefijos. Un nombre como `dw3_apellido1_apellido2` no cumple la consigna y puede restar un punto.
-- `users`: la tabla de Laravel (`id`, `name`, `email`, `password`, ...) más `role` cuando se haga el paso 24.
+- `users`: la tabla de Laravel (`id`, `name`, `email`, `password`, ...) más `role` (`string`: `administrador` o `usuario`), agregada en el paso 24.
 - `services`: `id`, `title`, `short_description`, `full_description`, `price`, `delivery_days`, `is_active`, `created_at`, `updated_at`. Es la tabla que cumple los cinco campos que pide la consigna.
 - `posts`: `id`, `title`, `summary`, `content`, `image` (string nullable), `published_at`, `created_at`, `updated_at`. `image` es el path en el disk `public` (`posts/...`), copiando el patrón de `cover`, no los nombres `cover` / `cover_description`. Las cards de "Novedades" de la home siguen usando imágenes fijas de `public/img`; eso no es el campo de `posts`.
 
@@ -123,8 +123,9 @@ Referencia: `resources/css/app.css`, `vite.config.js` y el `@vite` de `main.blad
 Referencia: `proyecto-docente/app/Http/Controllers/AuthController.php`, `database/seeders/UserSeeder.php`, `resources/views/auth/login.blade.php`, `bootstrap/app.php` y las rutas con `->middleware('auth')`.
 
 - `UserSeeder` crea el usuario admin con `DB::table('users')->insert()` y `Hash::make`.
-- `AuthController` tiene tres métodos: `showForm` (muestra el login), `processForm` (valida y entra) y `processLogout` (sale).
+- `AuthController` tiene cinco métodos: `showForm` (muestra el login), `processForm` (valida y entra), `processLogout` (sale), `showRegisterForm` (muestra el registro) y `processRegister` (valida, crea el usuario e inicia la sesión).
 - `processForm` guarda en `$credentials` lo que devuelve `$request->validate()` (`email` y `password`) y llama a `Auth::attempt($credentials)`, que es la versión activa del docente (las variantes con el array armado a mano quedan comentadas). Si falla, vuelve al login con el feedback de error. Si entra, redirige a `admin.posts.index` con el feedback de bienvenida.
+- `processRegister` (paso 25) valida `name` (`required`), `email` (`required|email|unique:users,email`) y `password` (`required`), sin confirmación de contraseña. `$data` sale de `validate()`; después se hashea la contraseña con `Hash::make` y se asigna `role` `usuario`. Se guarda con `User::create($data)`. `Auth::attempt` recibe la contraseña en claro (el cast `hashed` de `User` no vuelve a hashear un valor que ya es un hash) y `$request->session()->regenerate()` deja la sesión abierta. El éxito redirige a `home`. `unique:users,email` es la única regla que no está en la cursada ni en `proyecto-docente`. Las rutas `/registro` no llevan middleware.
 - Al entrar se llama a `$request->session()->regenerate()`. Es una excepción al docente, que no lo hace: la documentación de Laravel lo pide para evitar la fijación de sesión, igual que el docente sigue esa documentación en el logout.
 - `processLogout` hace `Auth::logout()`, `$request->session()->invalidate()` y `$request->session()->regenerateToken()`, y vuelve al login con feedback.
 - Las rutas del ABM llevan el middleware `auth` de Laravel, una por una, como crear, editar y eliminar de `movies` (paso 20). El listado del docente queda público porque es el catálogo; en RestoCode `admin.posts.index` también lleva `auth` porque el catálogo es `/blog`.

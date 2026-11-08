@@ -30,8 +30,8 @@ El proyecto cuenta con un panel de administración restringido que permite gesti
 3. **Blog / Novedades (`/blog` y `/blog/{id}`):**
    * Listado de artículos sobre tendencias, consejos y estrategias para gastronómicos.
    * Vista detallada de cada artículo.
-4. **Registro y autenticación de usuarios** (2do parcial, aún no implementado):
-   * El sitio debe permitir registro y autenticación. Sigue prohibido usar la interfaz y los controllers de autenticación que Laravel provee. El login propio de `/admin/login` ya existe. El registro es el paso 25: formulario propio en el `AuthController`, con `unique:users,email`.
+4. **Registro y autenticación de usuarios** (2do parcial, paso 25 hecho):
+   * El sitio permite registro y autenticación. Sigue prohibido usar la interfaz y los controllers de autenticación que Laravel provee. El login propio está en `/admin/login`. El registro está en `/registro`: formulario propio en el `AuthController`, con `unique:users,email`, rol `usuario` y sesión abierta hacia `home`.
 
 ### B. Admin (Administración)
 1. **Autenticación (`/admin/login`):**

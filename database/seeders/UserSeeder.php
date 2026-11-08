@@ -17,6 +17,18 @@ class UserSeeder extends Seeder
             'name' => 'Admin RestoCode',
             'email' => 'admin@restocode.com',
             'password' => Hash::make('restocode'),
+            'role' => 'administrador',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        // Usuario común: usuario@restocode.com / restocode
+        DB::table('users')->insert([
+            'id' => 2,
+            'name' => 'Usuario RestoCode',
+            'email' => 'usuario@restocode.com',
+            'password' => Hash::make('restocode'),
+            'role' => 'usuario',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
