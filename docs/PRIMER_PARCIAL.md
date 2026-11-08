@@ -59,7 +59,7 @@ Esos 31 commits son **del equipo**, no de Santiago Gallino. Cubren servicios, bl
 
 Al traerlos, `docs/PRD.md`, `docs/ROADMAP.md`, `docs/RULES.md` y el PDF del primer parcial **no se borran**: se actualizan. Origin **sí elimina** `AGENTS.md`, `CLAUDE.md`, `package-lock.json` (pasa a `pnpm-lock.yaml`), `resources/views/welcome.blade.php` y `public/styles.css`.
 
-`proyecto-docente` no está en el disco ni en el repo. Está en `.gitignore` (`/proyecto-docente`). Es la referencia de cómo escribe el docente; no se modifica ni se entrega.
+`proyecto-docente` está en el disco y en `.gitignore` (`/proyecto-docente`). Es el corte de octubre, la referencia de cómo escribe el docente; no se modifica ni se entrega.
 
 ## 3. Consigna del primer parcial
 
@@ -324,14 +324,16 @@ Se mantiene del primero: tema libre (excepto política y religión), sitio + adm
 
 ## 10. Fuente de verdad para implementar el segundo
 
+El orden vigente del 2do está en [ROADMAP.md](ROADMAP.md), pasos 24 a 29, y en [SEGUNDO_PARCIAL.md](SEGUNDO_PARCIAL.md). Lo que sigue describe el cierre del 1er: quedó viejo donde dice que `posts.image` no se reintroduce y que el rol espera la clase.
+
 Orden, sin asumir:
 
 1. **`proyecto-docente`** (carpeta local gitignoreada). Copiar la técnica **activa** que muestre la clase, no las alternativas comentadas. El primer parcial ya copió `AuthController@processForm` + `Auth::attempt`.
 2. **PDFs de consigna.** Si el parcial obliga a apartarse del docente, se documenta la excepción en RULES y se justifica.
-3. **`docs/RULES.md` y `docs/ROADMAP.md`**, actualizados cuando exista la clase correspondiente.
+3. **`docs/RULES.md` y `docs/ROADMAP.md`**, que ya tienen el orden de los pasos 24 a 29.
 4. Este snapshot, para no perder el cierre del primero.
 
-Si `proyecto-docente` no está en disco, **no se inventa** el schema de roles, la pivot usuario–servicio, el upload de imágenes ni el middleware. Se espera la carpeta o la clase.
+El upload de imágenes ya está (paso 23). Rol, pivot, registro y middleware de administrador se arman en los pasos 24 a 28. El corte de octubre tampoco los trae.
 
 Cuando se implemente el segundo, se actualizan PRD / ROADMAP / RULES. Este archivo no se usa como especificación de tablas nuevas.
 

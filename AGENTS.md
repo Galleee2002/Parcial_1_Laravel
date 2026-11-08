@@ -2,7 +2,7 @@
 
 Este repositorio es **RestoCode**: sitio Laravel de soluciones digitales para gastronomía (menú QR, landing, reservas) más un blog y un panel que administra entradas.
 
-No asumas técnicas, tablas ni patrones que no estén en las fuentes de abajo. Copiá la sintaxis **activa** de `docs-docente/proyecto` y cambiá el dominio (gastronomía, `services`, `posts`). Marcá las diferencias: no entregues un clon del docente.
+No asumas técnicas, tablas ni patrones que no estén en las fuentes de abajo. Copiá la sintaxis **activa** de `proyecto-docente` (no las alternativas comentadas) y cambiá el dominio (gastronomía, `services`, `posts`). Marcá las diferencias: no entregues un clon del docente.
 
 ## Leer primero
 
@@ -12,11 +12,11 @@ No asumas técnicas, tablas ni patrones que no estén en las fuentes de abajo. C
 4. [`docs/ROADMAP.md`](docs/ROADMAP.md) — orden de features y qué está hecho.
 5. [`docs/PRD.md`](docs/PRD.md) — dominio y páginas.
 6. PDFs en `docs/`: primer y segundo parcial.
-7. [`docs-docente/`](docs-docente/) — todo el material del profesor (local, gitignoreado). Índice en [`docs-docente/README.md`](docs-docente/README.md).
+7. [`proyecto-docente/`](proyecto-docente/) — Laravel del docente en disco (local, gitignoreado). Corte de octubre (`proyecto.rar`, 27-oct-2026): login, `cover`, middleware de edad y géneros. No se modifica ni se entrega.
 
 ## Fuente de verdad
 
-1. **`docs-docente/`** (local, gitignoreada). Ahí está el Laravel en `docs-docente/proyecto/`, el ejercicio de interfaces, los apuntes `.md` y los `.rar`. Copiá la técnica activa de la clase, no las alternativas comentadas. No se modifica ni se entrega.
+1. **`proyecto-docente/`** (local, gitignoreada). Corte de octubre, extraído de `proyecto.rar`. No se modifica ni se entrega. Ahí están `AuthController`, `EnsureIsOver18YearsOld`, la migración de `cover`, `Movie::rating()` y `Movie::genres()`. El inventario está en [`docs/SEGUNDO_PARCIAL.md`](docs/SEGUNDO_PARCIAL.md). Copiá la técnica activa, no las alternativas comentadas.
 2. **Consignas PDF** (ahora manda el 2do).
 3. **RULES / ROADMAP / PRD**, actualizados cuando una clase nueva los contradiga.
 
@@ -48,32 +48,32 @@ Seeders: `UserSeeder` (`admin@restocode.com` / `restocode`), 5 servicios (el úl
 
 Layouts: `<x-layouts.main>` (sitio y login), `<x-layouts.admin>` (panel).
 
-Las rutas `admin.posts.*` llevan `->middleware('auth')` y `bootstrap/app.php` redirige al invitado con `redirectGuestsTo` hacia `auth.login.form` (paso 20 / 22). El 2do pide además middleware **personalizado de administrador**; no adelantes un campo `role` inventado.
+Las rutas `admin.posts.*` llevan `->middleware('auth')` y `bootstrap/app.php` redirige al invitado con `redirectGuestsTo` hacia `auth.login.form` (paso 20 / 22). El rol es el paso 24 y el middleware personalizado de administrador, el 26. No los implementes hasta que se pida ese paso.
 
 No hay `datos.txt`.
 
-## Qué hay en `docs-docente` y qué no se copia
+## Qué hay en `proyecto-docente` y qué no se copia
+
+En disco, `proyecto-docente` es el corte de octubre. Ahí están `AuthController`, `EnsureIsOver18YearsOld`, `belongsToMany` y la migración de `cover`. El inventario está en [`docs/SEGUNDO_PARCIAL.md`](docs/SEGUNDO_PARCIAL.md).
 
 Ya copiado a RestoCode (paso 20): `redirectGuestsTo` + `middleware('auth')` en el ABM.
 
 Ya copiado (paso 23): upload de `cover` pasado a `posts.image` (`hasFile` → `store('posts', 'public')` + `Storage::disk('public')->delete`).
 
-Sigue en el docente (`docs-docente/proyecto`) y **no se implementa** salvo que se pida:
+No se copia, aunque la carpeta lo tenga:
 
-- Middleware propio `EnsureIsOver18YearsOld` + alias `over18`.
-- Relaciones 1:n (`belongsTo` rating) y n:n (`belongsToMany` géneros, pivot, `attach`/`sync`/`detach`).
-- `with`, `orderBy`, `paginate`.
-
-No se copia:
-
-- Verificación de edad ni `AgeVerificationController`.
+- Verificación de edad ni `AgeVerificationController`. El paso 26 copia solo la estructura `handle` + alias.
 - Mail / `MoviesReservationController` / `MovieReserved`.
 - Bootstrap, `public/css`, PK `movie_id`, comentarios largos de cursada.
 - `$request->input()` para guardar (en RestoCode `$data` sale de `validate()`).
-- Vistas `movies/*` ni el dominio cine.
-- El ejercicio `docs-docente/interfaces/` (POO/interfaces PHP) ni los apuntes de teoría, salvo que el ROADMAP lo pida.
+- Vistas `movies/*` ni el dominio cine (`ratings`, `genres`).
+- `with`, `orderBy`, `paginate`, salvo la excepción ya hecha de las 3 novedades de la home.
+- `attach` / `sync` / `detach` en un controller. La pivot del paso 27 se carga solo en el seeder.
 
-Todavía **no** está en el docente: registro, roles, listado/detalle de usuarios, servicio contratado. No lo inventes.
+Registro, rol, middleware de administrador, contratación y listado de usuarios los pide el parcial y no vienen armados en el docente. Se arman en los pasos 24 a 28 juntando piezas ya usadas. No se implementa un paso hasta que se pida. Dos excepciones, porque no están en la carpeta ni en la cursada:
+
+- Columna `role` (`string`) en `users`, con `administrador` y `usuario`. No una tabla de roles. Técnica: `Schema::table`, como la migración de `posts.image`.
+- Una sola regla nueva en el `validate` del registro: `unique:users,email`. El índice `unique` de la migración de `users` no es esa regla.
 
 ## Qué no se usa
 
@@ -89,13 +89,13 @@ Nombres de ruta, `$fillable`, `route()`, PHPDoc, `feedback.message` / `feedback.
 
 ## Segundo parcial
 
-El paso 23 (imágenes en entradas) ya está. El resto (24–28) no se implementa salvo que el usuario lo pida en el turno.
+Los pasos 22 y 23 están hechos. Los pasos 24 a 29 no se implementan salvo que el usuario pida ese paso en el turno. El orden es rol, registro, middleware de administrador, contratación, listado y detalle de usuarios, entrega.
 
-Pasos tentativos en ROADMAP 22–28. Detalle y tabla consigna vs docente: `docs/SEGUNDO_PARCIAL.md`.
+Detalle en [`docs/ROADMAP.md`](docs/ROADMAP.md) y en [`docs/SEGUNDO_PARCIAL.md`](docs/SEGUNDO_PARCIAL.md).
 
 ## Entrega (zip de Classroom)
 
-No incluir: `docs/`, `docs-docente/`, `AGENTS.md`, `CLAUDE.md`, `node_modules`, `vendor`, `.env`, ni el link `public/storage`. Sí incluir `public/build/` después de `pnpm build` (está en `.gitignore`). `datos.txt` con carácter **2do parcial**.
+No incluir: `docs/`, `proyecto-docente/`, `docs-docente/`, `AGENTS.md`, `CLAUDE.md`, `node_modules`, `vendor`, `.env`, ni el link `public/storage`. Sí incluir `public/build/` después de `pnpm build` (está en `.gitignore`). `datos.txt` con carácter **2do parcial**.
 
 ### Limpieza total (solo cuando el usuario lo pida)
 
@@ -103,7 +103,7 @@ No incluir: `docs/`, `docs-docente/`, `AGENTS.md`, `CLAUDE.md`, `node_modules`, 
 
 Únicamente cuando **yo** (el usuario de este chat) lo pida de forma explícita —p. ej. “borrá todos los documentos del parcial para una entrega limpia”— el agente debe:
 
-1. Eliminar del disco todo rastro de material de cursada / agentes / consignas locales: `docs/`, `docs-docente/` (proyecto, interfaces, rars y apuntes), `AGENTS.md`, `CLAUDE.md`, y cualquier otra carpeta o archivo equivalente que solo sirva de contexto de parcial (no el código de RestoCode).
+1. Eliminar del disco todo rastro de material de cursada / agentes / consignas locales: `docs/`, `proyecto-docente/`, `docs-docente/` si todavía existe, `AGENTS.md`, `CLAUDE.md`, y cualquier otra carpeta o archivo equivalente que solo sirva de contexto de parcial (no el código de RestoCode).
 2. Sacar esas entradas del `.gitignore` si ya no existen (o limpiar las que apuntaban a ese material).
 3. Revisar el proyecto y quitar referencias sueltas a ese material (rutas, comentarios de entrega en reglas internas, etc.) **solo** si quedan huérfanas tras el borrado.
 

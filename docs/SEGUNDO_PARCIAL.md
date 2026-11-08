@@ -1,6 +1,6 @@
 # Segundo parcial — contexto y proyecto del docente
 
-Este archivo es el inventario de lo que **ya** mostró el docente (carpeta `proyecto-docente/`, rar del 27-oct-2026) frente a la consigna del segundo parcial. No implementa features. No diseña tablas nuevas de RestoCode.
+Este archivo es el inventario de `proyecto-docente/` (rar del 27-oct-2026, extraído en esa carpeta) frente a la consigna del segundo parcial. No implementa features. El orden para armar lo que esa carpeta no trae está en [ROADMAP.md](ROADMAP.md), pasos 24 a 29.
 
 Cómo se escribe el código: [RULES.md](RULES.md). Orden de pasos: [ROADMAP.md](ROADMAP.md). Snapshot del primero: [PRIMER_PARCIAL.md](PRIMER_PARCIAL.md).
 
@@ -8,13 +8,13 @@ Si una clase nueva contradice esto, gana la clase y se actualizan RULES / ROADMA
 
 ## 1. Fuente de verdad
 
-1. `proyecto-docente/` (local, gitignoreada). Copiar la técnica **activa**, no las alternativas comentadas. No se modifica ni se entrega.
+1. `proyecto-docente/` (local, gitignoreada). Corte de octubre. Copiar la técnica **activa**, no las alternativas comentadas. No se modifica ni se entrega.
 2. `docs/Portales y Comercio Electrónico - Segundo Parcial.pdf`.
 3. RULES / ROADMAP / PRD, cuando una clase los actualice.
 
 Misma lógica que el primer parcial: el docente enseña **sintaxis y estructura** (controllers, migraciones, Eloquent, middleware). RestoCode cambia el **dominio** (gastronomía, `services`, `posts`, URLs bajo `/admin`) y deja las diferencias documentadas para no entregar un clon.
 
-`proyecto-docente` es el Laravel de películas del docente. No hay una carpeta extra dentro del rar: se extrae entero a `proyecto-docente/`.
+`proyecto-docente` en disco es el Laravel de películas de octubre: login, `cover`, middleware de edad, `ratings` y géneros. No trae registro, rol ni usuario–servicio.
 
 ## 2. Equivalencia con el docente (sigue del 1er)
 
@@ -28,6 +28,8 @@ Misma lógica que el primer parcial: el docente enseña **sintaxis y estructura*
 | Comentarios largos de cursada | No se copian. El parcial pide PHPDoc. |
 
 ## 3. Inventario de `proyecto-docente` (27-oct-2026)
+
+El inventario de abajo es esa carpeta. Los archivos se leen ahí.
 
 ### Ya se usó en el 1er (sigue igual)
 
@@ -63,7 +65,9 @@ Misma lógica que el primer parcial: el docente enseña **sintaxis y estructura*
 - Servicio contratado o compras asociados a un usuario.
 - Relaciones en el modelo `User` (sigue el Authenticatable de Laravel, con `#[Fillable]`, sin `belongsTo` / `hasMany`).
 
-No se inventa ese schema. Se espera la clase o, si el usuario pide implementar con lo que hay, se copia *solo* la técnica de relaciones/upload/middleware que el docente ya mostró y el dominio sale de la consigna, documentando la excepción.
+Esas cuatro cosas las pide el PDF y no vienen armadas. Se arman en los pasos 24 a 28 juntando piezas ya usadas, cuando se pida cada paso. No se espera otra clase.
+
+Excepciones, porque no están en `proyecto-docente` ni en la cursada: columna `role` (`string`) en `users`, con `administrador` y `usuario`, vía `Schema::table` (no una tabla de roles); y la regla `unique:users,email` en el `validate` del registro. El índice `unique` de la migración de `users` no es esa regla. El dominio sale de la consigna. No se copian `ratings`, `genres` ni la verificación de edad.
 
 ## 4. Consigna del 2do vs lo que ya se puede copiar
 
@@ -71,15 +75,15 @@ Fuente: PDF del segundo parcial. Lo que se mantiene del 1er (sitio + admin, Blad
 
 | Pedido del PDF | ¿El docente ya lo muestra? | Qué hacer en RestoCode |
 |---|---|---|
-| Registro y autenticación de usuarios (sin UI/controllers de auth de Laravel) | Auth de login sí. **Registro no.** | Login ya existe. Registro espera clase. |
-| Admin autenticado como **administrador** | `auth` de Laravel sí. Rol admin **no**. | No adelantar un campo `role` inventado. |
-| Middleware **personalizado** que verifique al administrador | Patrón de middleware propio sí (`EnsureIsOver18YearsOld`). Contenido de rol **no**. | Copiar estructura `handle` + `alias` cuando se implemente el rol. No copiar +18. |
+| Registro y autenticación de usuarios (sin UI/controllers de auth de Laravel) | Auth de login sí. **Registro no.** | Login ya existe. Registro: paso 25, juntando `validate`, `Hash::make`, `User::create` y `Auth::attempt`. |
+| Admin autenticado como **administrador** | `auth` de Laravel sí. Rol admin **no**. | Paso 24: columna `role` con `Schema::table`. No una tabla de roles. |
+| Middleware **personalizado** que verifique al administrador | Patrón de middleware propio sí (`EnsureIsOver18YearsOld`). Contenido de rol **no**. | Paso 26: misma estructura `handle` + alias. Condición: `Auth::user()->role`. No copiar +18. |
 | ABM del blog | Sí (ABM de `movies`). | Ya está en `admin/posts`. |
 | Alta/modificación de **imágenes** en el blog | Sí (`cover`). | Hecho en el paso 23: `posts.image`, `store('posts', 'public')`. |
-| Relaciones entre tablas y modelos relacionados | Sí (1:n rating, n:n géneros). | Copiar `belongsTo` / `belongsToMany`, FKs en migraciones nuevas, seeders. **No** copiar `ratings`/`genres` ni diseñar acá la contratación. |
-| Listado de usuarios + detalle con servicio contratado o compras (seeders, sin proceso de compra) | **No.** Reserva por mail no es eso. | Espera clase. |
-| Al menos un usuario con servicio contratado (seeders) | **No.** | Espera clase. |
-| 2 roles: usuario común y administrador | **No.** | Espera clase. |
+| Relaciones entre tablas y modelos relacionados | Sí (1:n rating, n:n géneros). | Paso 27: `belongsToMany` usuario–servicio, pivot y seeder. **No** copiar `ratings`/`genres`. Sin `attach`/`sync`/`detach` en un controller. |
+| Listado de usuarios + detalle con servicio contratado o compras (seeders, sin proceso de compra) | **No.** Reserva por mail no es eso. | Paso 28. Sin ABM de usuarios. |
+| Al menos un usuario con servicio contratado (seeders) | **No.** | Paso 27. |
+| 2 roles: usuario común y administrador | **No.** | Paso 24. |
 | Zip sin `public/storage` | El docente usa `storage/app/public/covers` y `public/storage/covers`. | La consigna lo prohíbe en el zip. `php artisan storage:link` es local; el enlace no se entrega. |
 | `datos.txt` carácter “2do parcial” | — | Paso de entrega. |
 
@@ -100,6 +104,6 @@ Obligatorias, iguales al 1er más las nuevas:
 
 ## 6. Estado de RestoCode hoy
 
-El código de la raíz es el primer parcial más el paso 20 (`auth` + `redirectGuestsTo`) y el paso 23 (imagen en `posts`). No hay registro, roles, middleware de administrador, relaciones Eloquent propias ni listado de usuarios.
+El código de la raíz es el primer parcial más el paso 20 (`auth` + `redirectGuestsTo`) y el paso 23 (imagen en `posts`). No hay registro, columna `role`, middleware de administrador, relaciones Eloquent propias ni listado de usuarios.
 
-Este archivo no autoriza a implementar el 2do. Cuando se pida, se sigue el ROADMAP y se copia de `proyecto-docente` la técnica activa de esa feature.
+Este archivo no autoriza a implementar el 2do. Cuando se pida un paso, se sigue el [ROADMAP.md](ROADMAP.md). La sintaxis activa se copia de `proyecto-docente`. Este inventario describe esa carpeta.

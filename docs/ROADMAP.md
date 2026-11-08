@@ -4,9 +4,9 @@ Este orden puede cambiar cuando el docente suba clases nuevas. Si una clase trae
 
 Acá está en qué orden se construye cada feature. Cómo se escribe el código está en [RULES.md](RULES.md). No se pasa al paso siguiente si el anterior no se puede abrir en el navegador.
 
-El proyecto es la raíz de este repositorio, en Laravel 13. `proyecto-docente` no se modifica ni se entrega: es la referencia de cómo escribe el docente (está en `.gitignore`). El dominio sale de [PRD.md](PRD.md): servicios para locales gastronómicos y un blog. El admin administra entradas; el 2do suma listado de usuarios cuando exista la clase.
+El proyecto es la raíz de este repositorio, en Laravel 13. `proyecto-docente` no se modifica ni se entrega: es la referencia de cómo escribe el docente (está en `.gitignore`). En disco es el corte de octubre, extraído de `proyecto.rar`: login, `cover`, middleware de edad y géneros. El inventario está en [SEGUNDO_PARCIAL.md](SEGUNDO_PARCIAL.md). El dominio sale de [PRD.md](PRD.md): servicios para locales gastronómicos y un blog. El admin administra entradas; el 2do suma registro, rol, middleware de administrador, contratación y listado de usuarios en los pasos 24 a 29. No se implementa un paso hasta que se pida.
 
-Lo que el docente muestra y la consigna no pide queda afuera: verificación de edad, mails de reserva, Bootstrap. Lo que el 2do pide y el docente **ya** muestra (upload de `cover`, relaciones `belongsTo` / `belongsToMany`, middleware propio + alias) se copia al implementar, con el dominio de RestoCode. Detalle en [SEGUNDO_PARCIAL.md](SEGUNDO_PARCIAL.md). El paso 20 ya protege el ABM con `auth` y `redirectGuestsTo`. El middleware personalizado de administrador y el campo de rol siguen sin hacerse.
+Lo que el docente muestra y la consigna no pide queda afuera: verificación de edad, mails de reserva, Bootstrap. Lo que el 2do pide se arma con sintaxis ya usada en RestoCode o inventariada en ese archivo (upload de `cover`, `belongsToMany`, middleware propio + alias), con el dominio de RestoCode. El paso 20 ya protege el ABM con `auth` y `redirectGuestsTo`. El rol, el registro, el middleware de administrador y la contratación son los pasos 24 a 28.
 
 Equivalencia con el ABM de películas del docente:
 
@@ -102,6 +102,8 @@ Sin sesión, el listado, crear, editar y eliminar (GET y POST) responden 302 a `
 
 ## 21. Entrega
 
+Este checklist es la entrega del 1er parcial. Después del paso 23, `posts` volvió a tener `image` y los formularios del ABM suben archivos: el ítem que dice lo contrario quedó viejo. La entrega del 2do es el paso 29.
+
 Archivo `datos.txt` en la raíz, con el texto que pide [PRD.md](PRD.md). Completar carrera, cuatrimestre, año, turno, comisión y apellido y nombre de todos los integrantes.
 
 Renombrar la base en MySQL y en `DB_DATABASE` del `.env` a `apellido1_apellido2` (hoy es `dw3_kuringhian_garcia`) y correr `php artisan migrate:fresh --seed` contra la base nueva.
@@ -154,11 +156,13 @@ Probar: `/`, `/servicios`, `/servicios/{id}`, `/blog`, `/blog/{id}` y `/admin/lo
 
 ## Segundo parcial
 
-No se implementa hasta que se pida. Los pasos de abajo son el orden tentativo según lo que **ya** está en `proyecto-docente` y lo que **falta** en clase. Si una clase trae otro orden o otra sintaxis, se reemplaza el paso y la regla en [RULES.md](RULES.md).
+No se implementa un paso hasta que se pida en el turno. El orden de abajo junta piezas que ya están en `proyecto-docente` (corte de octubre) o en RestoCode. Esa carpeta no trae registro, columna de rol ni usuario–servicio. Si una clase trae otro orden o otra sintaxis, se reemplaza el paso y la regla en [RULES.md](RULES.md).
+
+No se agregan confirmación de contraseña, ABM de usuarios, proceso de compra, `attach` / `sync` / `detach` en un controller, verificación de edad, mails ni `paginate`.
 
 ### 22. Proteger el admin con `auth` — hecho
 
-Es el paso 20, ya aplicado: `->middleware('auth')` en cada `admin.posts.*` y `$middleware->redirectGuestsTo(fn () => route('auth.login.form'))`. El 2do pide además un middleware **personalizado de administrador**; no se inventa el rol acá. Este corte usa el `auth` de Laravel, como el docente, y no adelanta el chequeo de rol.
+Es el paso 20, ya aplicado: `->middleware('auth')` en cada `admin.posts.*` y `$middleware->redirectGuestsTo(fn () => route('auth.login.form'))`. El 2do pide además un middleware personalizado de administrador: el rol es el paso 24 y el middleware, el 26. Este corte usa el `auth` de Laravel, como el docente, y no adelanta el chequeo de rol.
 
 ### 23. Imágenes en las entradas — hecho
 
@@ -170,22 +174,50 @@ Formularios de alta y edición: `enctype="multipart/form-data"`, `type="file"` `
 
 No se copiaron `cover` / `cover_description`. El zip no incluye `public/storage`; `php artisan storage:link` es local.
 
-### 24. Relaciones Eloquent — no hecho (técnica sí, schema no)
+### 24. Rol — no hecho
 
-El docente muestra 1:n (`Movie` `belongsTo` `Rating`) y n:n (`belongsToMany` géneros + pivot + `attach`/`sync`/`detach`) y seeders de esas tablas. La consigna pide relaciones, modelos relacionados y al menos un usuario con servicio contratado. **No hay** en el docente un usuario–servicio ni compras. No se diseña esa tabla hasta la clase o hasta que se pida implementar copiando solo la sintaxis.
+Migración nueva con `Schema::table` sobre `users`, igual que `2026_11_02_100000_add_image_column_to_posts_table`. No se edita `0001_01_01_000000_create_users_table`. Columna `role` (`string`). Valores: `administrador` y `usuario`. No hay tabla de roles. Excepción documentada: el parcial pide dos roles y el docente nunca agregó la columna; la técnica es la de agregar una columna a una tabla que ya existe.
 
-### 25. Middleware propio — no hecho (patrón sí, rol no)
+`UserSeeder` deja a `admin@restocode.com` / `restocode` con `role` `administrador` y suma un usuario común `usuario@restocode.com` / `restocode` con `role` `usuario`. Sigue `DB::table('users')->insert()` y `Hash::make`, con `created_at` y `updated_at` en `now()`. En `User`, el `#[Fillable]` de Laravel suma `role`. Sin middleware en este paso.
 
-Copiar estructura de `EnsureIsOver18YearsOld` + `alias()` en `bootstrap/app.php`. No copiar verificación de edad. El alias y el chequeo de **administrador** esperan el campo/rol, que el docente todavía no muestra.
+Probar: `php artisan migrate:fresh --seed` deja los dos usuarios con el rol que corresponde. El login de `admin@restocode.com` sigue abriendo `/admin/posts`.
 
-### 26. Registro de usuarios — espera clase
+### 25. Registro — no hecho
 
-La consigna lo pide. En `proyecto-docente` no hay `RegisterController` ni ruta de registro. No se inventa.
+Formulario público en `/registro`, con `AuthController@showRegisterForm` y `AuthController@processRegister` (PHPDoc), rutas GET y POST `auth.register.form` y `auth.register.process`, sin middleware, y vista `auth/register.blade.php` con `<x-layouts.main>`. No es un controller de autenticación de Laravel: son dos métodos más en el `AuthController` que ya tiene el login.
 
-### 27. Roles, listado y detalle de usuarios en el admin — espera clase
+Campos: nombre, email y contraseña. Misma estructura que `auth/login.blade.php`: `$request->validate()` con mensajes en español, `@csrf`, `novalidate`, `@class`, `@error` y `aria-*`. Reglas: `name` obligatorio, `email` con `required|email|unique:users,email`, `password` obligatorio. `unique:users,email` es la única regla que no está en la cursada ni en `proyecto-docente`; el índice `unique` de la migración de `users` no es esa regla. Sin confirmación de contraseña.
 
-La consigna pide 2 roles, listar usuarios y ver el detalle con el servicio contratado o las compras (datos por seeders, sin proceso de compra). El docente no tiene ABM de `users` ni relación de contratación. Mail de reserva de películas **no** es eso.
+Se guarda con `User::create` (como `Post::create`) y `Hash::make` (como `UserSeeder`). El `role` del registro es `usuario`. Después, `Auth::attempt` y `$request->session()->regenerate()` dejan la sesión abierta, como el login. La redirección va a `home` con `feedback.message`: el registrado es usuario común y el panel queda para el administrador (paso 26).
 
-### 28. Entrega del 2do — no hecho
+Probar: un email nuevo llega a `/` con sesión iniciada. El mismo email otra vez vuelve al formulario con el error de email repetido. Un campo vacío vuelve con su mensaje y lo escrito. `admin@restocode.com` no se puede volver a registrar.
 
-`datos.txt` con carácter “2do parcial”. Zip sin `proyecto-docente`, sin `docs/`, sin `AGENTS.md`, sin el link `public/storage`. Base `apellido1_apellido2` sin prefijo `dw3_`.
+### 26. Middleware de administrador — no hecho
+
+Clase `EnsureIsAdministrator` con `handle(Request $request, Closure $next)`. Si el rol es `administrador`, `return $next($request)`. Si no, redirige a `home` con `feedback.message` y `feedback.type` `danger`. Alias `administrator` en el `withMiddleware` de `bootstrap/app.php`. La estructura se copia de `proyecto-docente/app/Http/Middleware/EnsureIsOver18YearsOld.php`. No se copia la verificación de edad ni `AgeVerificationController`. La condición mira `Auth::user()->role`.
+
+Cada ruta `admin.posts.*` conserva `->middleware('auth')` y suma `->middleware('administrator')`. El `auth` sigue mandando al invitado a `/admin/login` con `redirectGuestsTo`. El alias corre con el usuario ya autenticado. Login, logout y registro no lo llevan.
+
+Probar: sin sesión, `/admin/posts` responde 302 a `/admin/login`. Con `usuario@restocode.com` / `restocode`, responde 302 a `/` con el aviso de que no es administrador y el POST no escribe. Con `admin@restocode.com` / `restocode` el ABM sigue andando. `/`, `/servicios`, `/blog` y `/registro` siguen públicos.
+
+### 27. Contratación — no hecho
+
+Relación n:n entre usuarios y servicios, con la sintaxis inventariada de géneros (`belongsToMany`, tabla pivot, FKs). No se copian `genres`, `movies_have_genres` ni las PK `movie_id` / `genre_id`. La pivot es `users_have_services`, con FKs a `users.id` y `services.id`, y `timestamps`. En `User`, método `services()`. En `Service`, método `users()`.
+
+La fila se carga solo con `DB::table()->insert()` y `now()` en un seeder registrado en `DatabaseSeeder`: el usuario `usuario@restocode.com` queda con un servicio activo. Al menos un usuario con un servicio contratado, como pide el parcial. Sin `attach`, `sync` ni `detach` en un controller: no hay formulario de contratación. Sin proceso de compra.
+
+Probar: `php artisan migrate:fresh --seed` deja esa fila. El usuario común tiene un servicio; el administrador, ninguno. Todavía no hay pantalla: el listado es el paso 28.
+
+### 28. Listado y detalle de usuarios — no hecho
+
+`/admin/usuarios` con `AdminUsersController@index` (`User::all()`, con PHPDoc) y `/admin/usuarios/{id}` con `AdminUsersController@show` (`User::findOrFail`, con PHPDoc). Rutas `admin.users.index` y `admin.users.show`, esta última con `whereNumber('id')`. Las dos llevan `->middleware('auth')` y `->middleware('administrator')`. Vistas `admin/users/index.blade.php` y `admin/users/show.blade.php` con `<x-layouts.admin>`.
+
+El listado es una tabla al estilo de `admin/posts/index.blade.php`: nombre, email, rol y un enlace al detalle. El detalle muestra esos datos y los servicios de la relación (`$user->services`), con título y precio en pesos. Sin alta, edición ni baja de usuarios. Sin `with`, `orderBy` ni `paginate`.
+
+Probar: con `admin@restocode.com` se ven los dos usuarios y, en el detalle del usuario común, el servicio del paso 27. El detalle del administrador no muestra servicios. Con `usuario@restocode.com`, las dos URLs responden 302 a `/`. Sin sesión, responden 302 a `/admin/login`. Un id inexistente o no numérico responde 404.
+
+### 29. Entrega del 2do — no hecho
+
+`datos.txt` en la raíz con carácter “2do parcial”, con el texto que pide [PRD.md](PRD.md). Renombrar la base en MySQL y en `DB_DATABASE` del `.env` a `apellido1_apellido2` (hoy es `dw3_kuringhian_garcia`) y correr `php artisan migrate:fresh --seed`.
+
+Zip sin `proyecto-docente`, sin `docs/`, sin `AGENTS.md` y sin el link `public/storage`. `php artisan storage:link` queda en local. `public/build/` entra después de `pnpm build`. El nombre del zip es `apellido-nombre_apellido2-nombre2.zip` (o `apellido-nombre.zip` si es individual).
