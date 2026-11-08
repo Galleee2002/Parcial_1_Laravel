@@ -23,4 +23,19 @@ class Service extends Model
             set: fn ($value) => $value * 100,
         );
     }
+
+    /**
+     * Usuarios que contrataron el servicio.
+     */
+    public function users()
+    {
+        return $this->belongsToMany(
+            User::class,
+            'users_have_services',
+            'service_fk',
+            'user_fk',
+            'id',
+            'id',
+        );
+    }
 }

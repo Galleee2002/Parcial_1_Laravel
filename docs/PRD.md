@@ -43,7 +43,7 @@ El proyecto cuenta con un panel de administración restringido que permite gesti
    * **Eliminar:** Mecanismo seguro para remover artículos.
    * **Listar:** Tabla con las entradas creadas y opciones de gestión.
    * Alta y modificación de **imágenes** en estas entradas (`posts.image`, patrón de `cover` del docente).
-3. **Usuarios (2do parcial, paso 28):**
+3. **Usuarios (2do parcial, paso 28 hecho):**
    * Listado de usuarios y detalle de cada uno, incluyendo el servicio contratado o las compras, si las tiene. Esos datos se cargan por seeders. No hace falta un proceso de compra.
 
 ### C. Base de Datos

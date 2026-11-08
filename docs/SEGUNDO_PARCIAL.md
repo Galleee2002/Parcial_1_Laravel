@@ -80,9 +80,9 @@ Fuente: PDF del segundo parcial. Lo que se mantiene del 1er (sitio + admin, Blad
 | Middleware **personalizado** que verifique al administrador | Patrón de middleware propio sí (`EnsureIsOver18YearsOld`). Contenido de rol **no**. | Hecho en el paso 26: misma estructura `handle` + alias `administrator`. Condición: `Auth::user()->role`. No se copió +18. |
 | ABM del blog | Sí (ABM de `movies`). | Ya está en `admin/posts`. |
 | Alta/modificación de **imágenes** en el blog | Sí (`cover`). | Hecho en el paso 23: `posts.image`, `store('posts', 'public')`. |
-| Relaciones entre tablas y modelos relacionados | Sí (1:n rating, n:n géneros). | Paso 27: `belongsToMany` usuario–servicio, pivot y seeder. **No** copiar `ratings`/`genres`. Sin `attach`/`sync`/`detach` en un controller. |
-| Listado de usuarios + detalle con servicio contratado o compras (seeders, sin proceso de compra) | **No.** Reserva por mail no es eso. | Paso 28. Sin ABM de usuarios. |
-| Al menos un usuario con servicio contratado (seeders) | **No.** | Paso 27. |
+| Relaciones entre tablas y modelos relacionados | Sí (1:n rating, n:n géneros). | Hecho en el paso 27: `belongsToMany` usuario–servicio, pivot `users_have_services` y seeder. **No** se copiaron `ratings`/`genres`. Sin `attach`/`sync`/`detach` en un controller. |
+| Listado de usuarios + detalle con servicio contratado o compras (seeders, sin proceso de compra) | **No.** Reserva por mail no es eso. | Hecho en el paso 28: `/admin/usuarios` y `/admin/usuarios/{id}`, sin ABM de usuarios. |
+| Al menos un usuario con servicio contratado (seeders) | **No.** | Hecho en el paso 27: `usuario@restocode.com` con Menú QR Básico. |
 | 2 roles: usuario común y administrador | **No.** | Paso 24. |
 | Zip sin `public/storage` | El docente usa `storage/app/public/covers` y `public/storage/covers`. | La consigna lo prohíbe en el zip. `php artisan storage:link` es local; el enlace no se entrega. |
 | `datos.txt` carácter “2do parcial” | — | Paso de entrega. |
@@ -104,6 +104,6 @@ Obligatorias, iguales al 1er más las nuevas:
 
 ## 6. Estado de RestoCode hoy
 
-El código de la raíz es el primer parcial más el paso 20 (`auth` + `redirectGuestsTo`), el paso 23 (imagen en `posts`), el paso 24 (columna `role` en `users`, con `administrador` y `usuario`), el paso 25 (registro en `/registro`, rol `usuario`, sesión hacia `home`) y el paso 26 (`EnsureIsAdministrator` con alias `administrator` en cada ruta `admin.posts.*`). No hay relaciones Eloquent propias ni listado de usuarios.
+El código de la raíz es el primer parcial más el paso 20 (`auth` + `redirectGuestsTo`), el paso 23 (imagen en `posts`), el paso 24 (columna `role` en `users`, con `administrador` y `usuario`), el paso 25 (registro en `/registro`, rol `usuario`, sesión hacia `home`), el paso 26 (`EnsureIsAdministrator` con alias `administrator` en cada ruta `admin.posts.*`), el paso 27 (pivot `users_have_services`, `User::services()` y `Service::users()`, una fila de seeder) y el paso 28 (`AdminUsersController` en `/admin/usuarios` y `/admin/usuarios/{id}`, con `$user->services`).
 
 Este archivo no autoriza a implementar el 2do. Cuando se pida un paso, se sigue el [ROADMAP.md](ROADMAP.md). La sintaxis activa se copia de `proyecto-docente`. Este inventario describe esa carpeta.

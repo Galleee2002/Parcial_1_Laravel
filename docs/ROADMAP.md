@@ -6,7 +6,7 @@ Acá está en qué orden se construye cada feature. Cómo se escribe el código 
 
 El proyecto es la raíz de este repositorio, en Laravel 13. `proyecto-docente` no se modifica ni se entrega: es la referencia de cómo escribe el docente (está en `.gitignore`). En disco es el corte de octubre, extraído de `proyecto.rar`: login, `cover`, middleware de edad y géneros. El inventario está en [SEGUNDO_PARCIAL.md](SEGUNDO_PARCIAL.md). El dominio sale de [PRD.md](PRD.md): servicios para locales gastronómicos y un blog. El admin administra entradas; el 2do suma registro, rol, middleware de administrador, contratación y listado de usuarios en los pasos 24 a 29. No se implementa un paso hasta que se pida.
 
-Lo que el docente muestra y la consigna no pide queda afuera: verificación de edad, mails de reserva, Bootstrap. Lo que el 2do pide se arma con sintaxis ya usada en RestoCode o inventariada en ese archivo (upload de `cover`, `belongsToMany`, middleware propio + alias), con el dominio de RestoCode. El paso 20 ya protege el ABM con `auth` y `redirectGuestsTo`. El rol, el registro, el middleware de administrador y la contratación son los pasos 24 a 28.
+Lo que el docente muestra y la consigna no pide queda afuera: verificación de edad, mails de reserva, Bootstrap. Lo que el 2do pide se arma con sintaxis ya usada en RestoCode o inventariada en ese archivo (upload de `cover`, `belongsToMany`, middleware propio + alias), con el dominio de RestoCode. El paso 20 ya protege el ABM con `auth` y `redirectGuestsTo`. El rol, el registro, el middleware de administrador, la contratación y el listado de usuarios son los pasos 24 a 28.
 
 Equivalencia con el ABM de películas del docente:
 
@@ -200,19 +200,21 @@ Cada ruta `admin.posts.*` conserva `->middleware('auth')` y suma `->middleware('
 
 Probar: sin sesión, `/admin/posts` responde 302 a `/admin/login`. Con `usuario@restocode.com` / `restocode`, responde 302 a `/` con el aviso de que no es administrador y el POST no escribe. Con `admin@restocode.com` / `restocode` el ABM sigue andando. `/`, `/servicios`, `/blog` y `/registro` siguen públicos.
 
-### 27. Contratación — no hecho
+### 27. Contratación — hecho
 
-Relación n:n entre usuarios y servicios, con la sintaxis inventariada de géneros (`belongsToMany`, tabla pivot, FKs). No se copian `genres`, `movies_have_genres` ni las PK `movie_id` / `genre_id`. La pivot es `users_have_services`, con FKs a `users.id` y `services.id`, y `timestamps`. En `User`, método `services()`. En `Service`, método `users()`.
+Relación n:n entre usuarios y servicios, con la sintaxis activa de géneros (`belongsToMany` de seis argumentos, tabla pivot, FKs, PK compuesta). No se copian `genres`, `movies_have_genres` ni las PK `movie_id` / `genre_id`. La pivot es `users_have_services`. `user_fk` usa `foreignId()->constrained(table: 'users', column: 'id')`. `service_fk` es `unsignedBigInteger` más `foreign()->references('id')->on('services')`: en el docente la segunda FK es `unsignedSmallInteger` porque `genre_id` es `smallIncrements`, y acá `services.id` es bigint. PK compuesta `['user_fk', 'service_fk']` y `timestamps()`. Sin `$table->id()`.
 
-La fila se carga solo con `DB::table()->insert()` y `now()` en un seeder registrado en `DatabaseSeeder`: el usuario `usuario@restocode.com` queda con un servicio activo. Al menos un usuario con un servicio contratado, como pide el parcial. Sin `attach`, `sync` ni `detach` en un controller: no hay formulario de contratación. Sin proceso de compra.
+En `User`, método `services()`. En `Service`, método `users()` (el docente no define el inverso en `Genre`; acá sí, porque el paso 28 lee `$user->services`).
 
-Probar: `php artisan migrate:fresh --seed` deja esa fila. El usuario común tiene un servicio; el administrador, ninguno. Todavía no hay pantalla: el listado es el paso 28.
+`UserHasServiceSeeder` carga una fila con `DB::table()->insert()` y `now()`, registrado al final de `DatabaseSeeder`: `user_fk` 2 (`usuario@restocode.com`) y `service_fk` 1 (Menú QR Básico, el primer servicio activo). El administrador no tiene filas. El servicio 5 queda afuera porque `is_active` es falso. Sin `attach`, `sync` ni `detach` en un controller: no hay formulario de contratación. Sin proceso de compra.
 
-### 28. Listado y detalle de usuarios — no hecho
+Probar: `php artisan migrate:fresh --seed` deja esa fila. El usuario común tiene un servicio; el administrador, ninguno. `Service::find(1)->users` es el usuario común. La pantalla del listado es el paso 28.
+
+### 28. Listado y detalle de usuarios — hecho
 
 `/admin/usuarios` con `AdminUsersController@index` (`User::all()`, con PHPDoc) y `/admin/usuarios/{id}` con `AdminUsersController@show` (`User::findOrFail`, con PHPDoc). Rutas `admin.users.index` y `admin.users.show`, esta última con `whereNumber('id')`. Las dos llevan `->middleware('auth')` y `->middleware('administrator')`. Vistas `admin/users/index.blade.php` y `admin/users/show.blade.php` con `<x-layouts.admin>`.
 
-El listado es una tabla al estilo de `admin/posts/index.blade.php`: nombre, email, rol y un enlace al detalle. El detalle muestra esos datos y los servicios de la relación (`$user->services`), con título y precio en pesos. Sin alta, edición ni baja de usuarios. Sin `with`, `orderBy` ni `paginate`.
+El listado es una tabla al estilo de `admin/posts/index.blade.php`: nombre, email, rol y un enlace al detalle (ícono `eye`, sin editar ni eliminar). El detalle muestra esos datos y los servicios de la relación (`$user->services`) con `@forelse`, título y precio en pesos; si no hay filas, «Sin servicios contratados.». El nav del layout `admin` suma «Usuarios» a `admin.users.index`, activo con `admin.users.*`. Sin alta, edición ni baja de usuarios. Sin `with`, `orderBy` ni `paginate`.
 
 Probar: con `admin@restocode.com` se ven los dos usuarios y, en el detalle del usuario común, el servicio del paso 27. El detalle del administrador no muestra servicios. Con `usuario@restocode.com`, las dos URLs responden 302 a `/`. Sin sesión, responden 302 a `/admin/login`. Un id inexistente o no numérico responde 404.
 

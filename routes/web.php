@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminPostsController;
+use App\Http\Controllers\AdminUsersController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PostsController;
@@ -29,3 +30,6 @@ Route::get('/admin/posts/{id}/editar', [AdminPostsController::class, 'edit'])->n
 Route::post('/admin/posts/{id}/editar', [AdminPostsController::class, 'update'])->name('admin.posts.update')->whereNumber('id')->middleware('auth')->middleware('administrator');
 Route::get('/admin/posts/{id}/eliminar', [AdminPostsController::class, 'delete'])->name('admin.posts.delete')->whereNumber('id')->middleware('auth')->middleware('administrator');
 Route::post('/admin/posts/{id}/eliminar', [AdminPostsController::class, 'destroy'])->name('admin.posts.destroy')->whereNumber('id')->middleware('auth')->middleware('administrator');
+
+Route::get('/admin/usuarios', [AdminUsersController::class, 'index'])->name('admin.users.index')->middleware('auth')->middleware('administrator');
+Route::get('/admin/usuarios/{id}', [AdminUsersController::class, 'show'])->name('admin.users.show')->whereNumber('id')->middleware('auth')->middleware('administrator');

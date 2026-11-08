@@ -35,6 +35,20 @@
                         </a>
                     </li>
                     <li>
+                        <a @class([
+                            'flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-zinc-800 hover:text-white',
+                            'bg-zinc-800 text-white' => request()->routeIs('admin.users.*'),
+                            'text-zinc-300' => ! request()->routeIs('admin.users.*'),
+                        ]) href="{{ route('admin.users.index') }}" @if (request()->routeIs('admin.users.*')) aria-current="page" @endif>
+                            <i data-lucide="user" @class([
+                                'size-5 shrink-0',
+                                'text-blue-300' => request()->routeIs('admin.users.*'),
+                                'text-zinc-400' => ! request()->routeIs('admin.users.*'),
+                            ]) aria-hidden="true"></i>
+                            <span data-sidebar-label>Usuarios</span>
+                        </a>
+                    </li>
+                    <li>
                         <a class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-zinc-300 hover:bg-zinc-800 hover:text-white" href="{{ route('home') }}">
                             <i data-lucide="globe" class="size-5 shrink-0 text-zinc-400" aria-hidden="true"></i>
                             <span data-sidebar-label>Ver sitio</span>

@@ -29,4 +29,19 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Servicios contratados por el usuario.
+     */
+    public function services()
+    {
+        return $this->belongsToMany(
+            Service::class,
+            'users_have_services',
+            'user_fk',
+            'service_fk',
+            'id',
+            'id',
+        );
+    }
 }

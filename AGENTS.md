@@ -39,8 +39,9 @@ Rutas en [`routes/web.php`](routes/web.php):
 - Públicas: `home`, `services.index`, `services.show`, `blog.index`, `blog.show`, `auth.register.form` / `auth.register.process` (`/registro`).
 - Auth propia: `auth.login.form` / `auth.login.process` (`/admin/login`), `auth.logout.process` (`POST /admin/logout`).
 - ABM: `admin.posts.*` (listar, crear, editar, eliminar con GET de confirmación + POST), cada una con `->middleware('auth')` y `->middleware('administrator')`.
+- Usuarios: `admin.users.index` (`/admin/usuarios`) y `admin.users.show` (`/admin/usuarios/{id}`), con `->middleware('auth')` y `->middleware('administrator')`. Sin alta, edición ni baja.
 
-Controllers: `HomeController`, `ServicesController`, `PostsController`, `AdminPostsController`, `AuthController` (`Auth::attempt`, `session()->regenerate()` al entrar).
+Controllers: `HomeController`, `ServicesController`, `PostsController`, `AdminPostsController`, `AdminUsersController`, `AuthController` (`Auth::attempt`, `session()->regenerate()` al entrar).
 
 Tablas: `users` (Laravel más columna `role`), `services` (6 campos de negocio; precio en centavos + accessor), `posts` (`title`, `summary`, `content`, `image` nullable, `published_at`).
 
@@ -70,7 +71,7 @@ No se copia, aunque la carpeta lo tenga:
 - `with`, `orderBy`, `paginate`, salvo la excepción ya hecha de las 3 novedades de la home.
 - `attach` / `sync` / `detach` en un controller. La pivot del paso 27 se carga solo en el seeder.
 
-El registro ya está (paso 25): `showRegisterForm` y `processRegister` en el `AuthController`, rol `usuario`. El middleware de administrador ya está (paso 26). Contratación y listado de usuarios los pide el parcial y no vienen armados en el docente. El rol ya está (paso 24). El resto se arma en los pasos 27 y 28 juntando piezas ya usadas. No se implementa un paso hasta que se pida. Dos excepciones, porque no están en la carpeta ni en la cursada:
+El registro ya está (paso 25): `showRegisterForm` y `processRegister` en el `AuthController`, rol `usuario`. El middleware de administrador ya está (paso 26). La contratación ya está (paso 27): pivot `users_have_services`, `User::services()`, `Service::users()` y una fila en `UserHasServiceSeeder`. El listado y el detalle de usuarios ya están (paso 28): `AdminUsersController` en `/admin/usuarios` y `/admin/usuarios/{id}`. El rol ya está (paso 24). No se implementa un paso hasta que se pida. Dos excepciones, porque no están en la carpeta ni en la cursada:
 
 - Columna `role` (`string`) en `users`, con `administrador` y `usuario`. No una tabla de roles. Técnica: `Schema::table`, como la migración de `posts.image`.
 - Una sola regla nueva en el `validate` del registro: `unique:users,email`. El índice `unique` de la migración de `users` no es esa regla.
@@ -89,7 +90,7 @@ Nombres de ruta, `$fillable`, `route()`, PHPDoc, `feedback.message` / `feedback.
 
 ## Segundo parcial
 
-Los pasos 22, 23, 24, 25 y 26 están hechos. Los pasos 27 a 29 no se implementan salvo que el usuario pida ese paso en el turno. El orden que sigue es contratación, listado y detalle de usuarios, entrega.
+Los pasos 22, 23, 24, 25, 26, 27 y 28 están hechos. El paso 29 no se implementa salvo que el usuario pida ese paso en el turno. El orden que sigue es la entrega.
 
 Detalle en [`docs/ROADMAP.md`](docs/ROADMAP.md) y en [`docs/SEGUNDO_PARCIAL.md`](docs/SEGUNDO_PARCIAL.md).
 
