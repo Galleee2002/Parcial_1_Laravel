@@ -9,7 +9,6 @@ class UserHasServiceSeeder extends Seeder
 {
     public function run(): void
     {
-        // usuario@restocode.com contrata Menú QR Básico.
         DB::table('users_have_services')->insert([
             [
                 'user_fk' => 2,

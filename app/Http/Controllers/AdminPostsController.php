@@ -40,7 +40,7 @@ class AdminPostsController extends Controller
             'title' => 'required|min:2|max:100',
             'summary' => 'required|max:255',
             'content' => 'required',
-            'published_at' => 'required|date',
+            'image_description' => 'nullable|max:255',
         ], [
             'title.required' => 'El título es obligatorio.',
             'title.min' => 'El título tiene que tener al menos :min caracteres.',
@@ -48,9 +48,10 @@ class AdminPostsController extends Controller
             'summary.required' => 'El resumen es obligatorio.',
             'summary.max' => 'El resumen no puede superar los :max caracteres.',
             'content.required' => 'El contenido es obligatorio.',
-            'published_at.required' => 'La fecha de publicación es obligatoria.',
-            'published_at.date' => 'La fecha de publicación no es válida.',
+            'image_description.max' => 'La descripción de la imagen no puede superar los :max caracteres.',
         ]);
+
+        $data['published_at'] = now()->toDateString();
 
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('posts', 'public');
@@ -82,7 +83,7 @@ class AdminPostsController extends Controller
             'title' => 'required|min:2|max:100',
             'summary' => 'required|max:255',
             'content' => 'required',
-            'published_at' => 'required|date',
+            'image_description' => 'nullable|max:255',
         ], [
             'title.required' => 'El título es obligatorio.',
             'title.min' => 'El título tiene que tener al menos :min caracteres.',
@@ -90,8 +91,7 @@ class AdminPostsController extends Controller
             'summary.required' => 'El resumen es obligatorio.',
             'summary.max' => 'El resumen no puede superar los :max caracteres.',
             'content.required' => 'El contenido es obligatorio.',
-            'published_at.required' => 'La fecha de publicación es obligatoria.',
-            'published_at.date' => 'La fecha de publicación no es válida.',
+            'image_description.max' => 'La descripción de la imagen no puede superar los :max caracteres.',
         ]);
 
         $post = Post::findOrFail($id);

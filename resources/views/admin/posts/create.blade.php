@@ -88,21 +88,21 @@
             </div>
 
             <div>
-                <label class="block text-sm font-medium" for="published_at">Fecha de publicación</label>
+                <label class="block text-sm font-medium" for="image_description">Descripción de la imagen</label>
                 <input
-                    type="date"
-                    id="published_at"
-                    name="published_at"
-                    value="{{ old('published_at') }}"
+                    type="text"
+                    id="image_description"
+                    name="image_description"
+                    value="{{ old('image_description') }}"
                     @class([
-                        'mt-1 rounded border bg-white px-3 py-2',
-                        'border-zinc-300' => ! $errors->has('published_at'),
-                        'border-red-500 text-red-700' => $errors->has('published_at'),
+                        'mt-1 w-full rounded border bg-white px-3 py-2',
+                        'border-zinc-300' => ! $errors->has('image_description'),
+                        'border-red-500 text-red-700' => $errors->has('image_description'),
                     ])
-                    @error('published_at') aria-invalid="true" aria-errormessage="error-published_at" @enderror
+                    @error('image_description') aria-invalid="true" aria-errormessage="error-image_description" @enderror
                 >
-                @error('published_at')
-                    <p class="mt-1 text-sm text-red-600" id="error-published_at">{{ $message }}</p>
+                @error('image_description')
+                    <p class="mt-1 text-sm text-red-600" id="error-image_description">{{ $message }}</p>
                 @enderror
             </div>
 

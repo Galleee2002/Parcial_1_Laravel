@@ -16,9 +16,33 @@
                     <li><a class="hover:text-blue-300" href="{{ route('services.index') }}">Servicios</a></li>
                     <li><a class="hover:text-blue-300" href="{{ route('blog.index') }}">Blog</a></li>
                 </ul>
-                <a class="flex size-9 items-center justify-center rounded-full hover:bg-blue-300 hover:text-zinc-900" href="{{ route('auth.login.form') }}" aria-label="Iniciar sesión">
-                    <i data-lucide="user" class="size-5"></i>
-                </a>
+                @auth
+                    @if (auth()->user()->role === 'administrador')
+                        <a class="flex size-9 items-center justify-center rounded-full hover:bg-blue-300 hover:text-zinc-900" href="{{ route('admin.posts.index') }}" aria-label="Panel">
+                            <i data-lucide="layout-dashboard" class="size-5"></i>
+                        </a>
+                    @else
+                        <details class="relative">
+                            <summary class="flex size-9 cursor-pointer list-none items-center justify-center rounded-full hover:bg-blue-300 hover:text-zinc-900 [&::-webkit-details-marker]:hidden" aria-label="Panel">
+                                <i data-lucide="layout-dashboard" class="size-5"></i>
+                            </summary>
+                            <div class="absolute right-0 z-10 mt-2 w-56 rounded-lg border border-zinc-200 bg-white p-2 text-zinc-900 shadow-lg">
+                                <p class="truncate px-2 py-1 text-xs text-zinc-500">{{ auth()->user()->email }}</p>
+                                <form action="{{ route('auth.logout.process') }}" method="post">
+                                    @csrf
+                                    <button class="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm font-semibold hover:bg-zinc-100" type="submit">
+                                        <i data-lucide="log-out" class="size-4" aria-hidden="true"></i>
+                                        Cerrar sesión
+                                    </button>
+                                </form>
+                            </div>
+                        </details>
+                    @endif
+                @else
+                    <a class="flex size-9 items-center justify-center rounded-full hover:bg-blue-300 hover:text-zinc-900" href="{{ route('auth.login.form') }}" aria-label="Iniciar sesión">
+                        <i data-lucide="user" class="size-5"></i>
+                    </a>
+                @endauth
             </div>
         </nav>
     </header>

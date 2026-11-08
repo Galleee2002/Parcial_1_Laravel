@@ -54,8 +54,8 @@ El proyecto cuenta con un panel de administración restringido que permite gesti
   2. `services`: (Tabla de servicios con más de 5 campos específicos)
      * Campos: `id`, `title`, `short_description`, `full_description`, `price`, `delivery_days`, `is_active`, `created_at`, `updated_at`.
   3. `posts`: (Tabla para el blog)
-     * Campos: `id`, `title`, `summary`, `content`, `image` (string nullable; path en el disk `public`), `published_at`, `created_at`, `updated_at`.
-     * Alta y modificación de imagen en el ABM, copiando el patrón de `cover` del docente. Las cards de “Novedades” de la home siguen usando `public/img`; eso no es el campo de `posts`.
+     * Campos: `id`, `title`, `summary`, `content`, `image` (string nullable; path en el disk `public`), `image_description` (string nullable), `published_at`, `created_at`, `updated_at`.
+     * Alta y modificación de imagen en el ABM, copiando el patrón de `cover` del docente, con un texto opcional de descripción. `published_at` la asigna el alta con la fecha de hoy; el formulario no la pide. Las cards de “Novedades” de la home no usan `image`: la foto es de `public/img` (proporción 4/3) y el texto queda en el bloque inferior de fondo liso, con padding para separarlo de la foto.
 * **Relaciones (2do parcial, paso 27):** n:n usuario–servicio (`users_have_services`), cargada por seeders. Al menos un usuario con un servicio contratado. No se copian `rating` ni `genres`. Sin proceso de compra.
 * **Roles (2do parcial, paso 24):** usuario común (`usuario`) y administrador (`administrador`), en la columna `role`.
 

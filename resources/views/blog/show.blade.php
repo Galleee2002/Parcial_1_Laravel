@@ -17,7 +17,7 @@
 
             <div class="mt-8">
                 @if ($post->image != null && Storage::disk('public')->exists($post->image))
-                    <img class="w-full rounded-md" src="{{ asset('storage/' . $post->image) }}" alt="{{ $post->title }}">
+                    <img class="w-full rounded-md" src="{{ asset('storage/' . $post->image) }}" alt="{{ $post->image_description }}">
                 @else
                     <p class="text-sm text-zinc-500">Sin imagen.</p>
                 @endif

@@ -77,7 +77,7 @@ Referencia: `proyecto-docente/database/migrations/2026_08_25_231756_create_movie
 - `DB_DATABASE` se llama `apellido_nombre` (o `apellido1_apellido2` si el trabajo es en grupo), sin prefijos. Un nombre como `dw3_apellido1_apellido2` no cumple la consigna y puede restar un punto.
 - `users`: la tabla de Laravel (`id`, `name`, `email`, `password`, ...) más `role` (`string`: `administrador` o `usuario`), agregada en el paso 24.
 - `services`: `id`, `title`, `short_description`, `full_description`, `price`, `delivery_days`, `is_active`, `created_at`, `updated_at`. Es la tabla que cumple los cinco campos que pide la consigna.
-- `posts`: `id`, `title`, `summary`, `content`, `image` (string nullable), `published_at`, `created_at`, `updated_at`. `image` es el path en el disk `public` (`posts/...`), copiando el patrón de `cover`, no los nombres `cover` / `cover_description`. Las cards de "Novedades" de la home siguen usando imágenes fijas de `public/img`; eso no es el campo de `posts`.
+- `posts`: `id`, `title`, `summary`, `content`, `image` (string nullable), `image_description` (string nullable), `published_at`, `created_at`, `updated_at`. `image` es el path en el disk `public` (`posts/...`), copiando el patrón de `cover`, no el nombre `cover`. `image_description` copia `cover_description` con el nombre del dominio. Las cards de "Novedades" de la home no usan `posts.image`. La foto de `public/img` va arriba con proporción 4/3 (`object-cover`): la entrada del menú QR usa `card-2.webp`, la de reservas `card-3.webp` y la de la web `card-1.webp`. Debajo, el texto queda en un bloque con fondo liso `bg-zinc-900`, texto blanco y padding propio, para que no quede apretado contra la foto. `hero.webp` sigue en disco y la vista no lo carga.
 
 ## Vistas
 
@@ -142,6 +142,7 @@ El 1er parcial no lo pedía y se sacó `posts.image`. El 2do sí (paso 23): colu
 - Al editar o borrar, si había archivo viejo: `Storage::disk('public')->exists` + `Storage::disk('public')->delete`. El disk default de Laravel 13 es `local`; sin `'public'` no se encuentra el archivo.
 - En las vistas, `asset('storage/' . $post->image)`. `Storage::url()` arma la URL con `APP_URL`; en local eso queda en `http://localhost` y no coincide con `php artisan serve` (`:8000`). `exists` / `delete` siguen en `Storage::disk('public')`.
 - El zip de entrega **no** incluye el link `public/storage`. `storage:link` es local.
+- Junto al archivo va `image_description` (`nullable|max:255`), el texto opcional del docente para `cover_description`. El `alt` de la foto usa ese texto. `published_at` no está en el formulario: no hay filtro de fechas futuras, así que `store` la asigna con `now()->toDateString()` y `update` no la cambia.
 
 ## Nombres y responsabilidad
 

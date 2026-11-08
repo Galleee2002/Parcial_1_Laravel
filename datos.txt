@@ -1,0 +1,9 @@
+Carrera: Diseño web y Programación
+Materia: Portales y Comercio Electrónico
+Cuatrimestre: [N° Cuatrimestre]
+Año: 2026
+Turno: Noche
+Comisión: DWN4AP
+Apellido y Nombre: Milagros Sol Kuringhian, Gael García
+Docente: Santiago Gallino
+Carácter de entrega: 2do parcial

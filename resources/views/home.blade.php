@@ -2,17 +2,7 @@
     <x-slot:title>Inicio</x-slot:title>
 
     <x-slot:hero>
-        <section class="relative isolate w-full overflow-hidden bg-zinc-900 text-white">
-            <img
-                src="{{ asset('img/hero.webp') }}"
-                alt="Comensal consultando el menú digital en un restaurante, con un código QR en la mesa"
-                class="absolute inset-0 -z-10 h-full w-full object-cover object-right"
-                width="2752"
-                height="1536"
-                fetchpriority="high"
-            >
-            <div class="absolute inset-0 -z-10 bg-linear-to-r from-zinc-950/85 via-zinc-950/50 to-transparent"></div>
-
+        <section class="w-full bg-zinc-900 text-white">
             <div class="mx-auto max-w-6xl px-4 py-24 md:py-40">
                 <h1 class="max-w-xl text-4xl font-semibold md:text-5xl">Digitalizá tu local gastronómico</h1>
                 <p class="mt-4 max-w-md text-zinc-200">Menús QR, sitios web y reservas para restaurantes, bares y cafeterías.</p>
@@ -48,18 +38,26 @@
             <a class="text-sm underline" href="{{ route('blog.index') }}">Ver todas las entradas</a>
         </div>
 
-        <div class="mt-6 grid gap-6 md:grid-cols-3">
+        <div class="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             @foreach ($posts as $post)
-                <article class="aspect-square overflow-hidden rounded-xl bg-zinc-900 bg-cover bg-center text-white" style="background-image: url('{{ asset('img/card-' . $loop->iteration . '.webp') }}')">
-                    <a class="group relative flex h-full flex-col justify-end p-6" href="{{ route('blog.show', ['id' => $post->id]) }}">
-                        <div class="absolute inset-0 bg-linear-to-t from-zinc-950/90 via-zinc-950/40 to-transparent"></div>
-
-                        <div class="relative">
+                <article class="flex h-full flex-col overflow-hidden rounded-xl bg-zinc-900 text-white">
+                    <a class="group flex h-full flex-col" href="{{ route('blog.show', ['id' => $post->id]) }}">
+                        <img
+                            class="aspect-[4/3] w-full object-cover"
+                            src="{{ asset('img/' . match ($post->id) {
+                                1 => 'card-2.webp',
+                                2 => 'card-3.webp',
+                                3 => 'card-1.webp',
+                                default => 'card-' . $loop->iteration . '.webp',
+                            }) }}"
+                            alt=""
+                        >
+                        <div class="flex flex-1 flex-col gap-2 bg-zinc-900 px-5 py-5">
                             <p class="text-sm text-zinc-300">
                                 Publicado el <time datetime="{{ $post->published_at }}">{{ $post->published_at }}</time>
                             </p>
-                            <h3 class="mt-1 text-xl font-semibold group-hover:underline">{{ $post->title }}</h3>
-                            <p class="mt-2 text-sm text-zinc-300">{{ $post->summary }}</p>
+                            <h3 class="text-lg font-semibold leading-snug group-hover:underline">{{ $post->title }}</h3>
+                            <p class="text-sm leading-relaxed text-zinc-300">{{ $post->summary }}</p>
                         </div>
                     </a>
                 </article>

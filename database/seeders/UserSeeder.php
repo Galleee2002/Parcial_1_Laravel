@@ -11,7 +11,6 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        // Usuario de prueba del panel: admin@restocode.com / restocode
         DB::table('users')->insert([
             'id' => 1,
             'name' => 'Admin RestoCode',
@@ -22,7 +21,6 @@ class UserSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        // Usuario común: usuario@restocode.com / restocode
         DB::table('users')->insert([
             'id' => 2,
             'name' => 'Usuario RestoCode',
